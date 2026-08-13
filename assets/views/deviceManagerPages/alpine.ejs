@@ -1,103 +1,147 @@
 <style>
-    #term-container { background:#0d1117; border-radius:6px; overflow:hidden; font-family:'Courier New',monospace; font-size:13px; }
-    #term-output { height:300px; overflow-y:auto; padding:12px; color:#c9d1d9; white-space:pre-wrap; word-break:break-all; }
-    #term-output .cmd-line { color:#58a6ff; }
-    #term-output .out-line { color:#c9d1d9; }
-    #term-output .err-line { color:#f85149; }
-    #term-input-area { display:flex; align-items:center; background:#161b22; padding:8px 12px; border-top:1px solid #30363d; }
-    #term-input-area .prompt { color:#3fb950; margin-right:6px; white-space:nowrap; font-weight:bold; }
-    #term-input { flex:1; background:transparent; border:none; color:#c9d1d9; font-family:'Courier New',monospace; font-size:13px; outline:none; }
-    #term-input::placeholder { color:#484f58; }
-    #term-status { font-size:11px; color:#8b949e; padding:4px 12px; background:#161b22; border-top:1px solid #30363d; }
-    #proc-log { background:#0d1117; color:#c9d1d9; font-family:'Courier New',monospace; font-size:12px; padding:12px; border-radius:6px; max-height:300px; overflow-y:auto; white-space:pre-wrap; }
-    #pkg-list { background:#fff; }
-    body.dark-mode #pkg-list { background:#1b1e24; border-color:#3a3f47 !important; color:#c8ccd4; }
-    body.dark-mode #pkg-list .item { color:#c8ccd4; }
+    .term-container { background: #0d1117; border-radius: 8px; overflow: hidden; font-family: 'Courier New', monospace; font-size: 13px; border: 1px solid #21262d; }
+    .term-output { height: 350px; overflow-y: auto; padding: 12px; color: #c9d1d9; white-space: pre-wrap; word-break: break-all; }
+    .term-output .cmd { color: #58a6ff; }
+    .term-output .out { color: #c9d1d9; }
+    .term-output .err { color: #f85149; }
+    .term-output .sys { color: #8b949e; font-style: italic; }
+    .term-input-bar { display: flex; align-items: center; background: #161b22; padding: 8px 12px; border-top: 1px solid #21262d; }
+    .term-prompt { color: #3fb950; margin-right: 8px; font-weight: bold; white-space: nowrap; }
+    .term-input { flex: 1; background: transparent; border: none; color: #c9d1d9; font-family: 'Courier New', monospace; font-size: 13px; outline: none; }
+    .term-input::placeholder { color: #484f58; }
+    .term-status { font-size: 11px; color: #8b949e; padding: 6px 12px; background: #161b22; border-top: 1px solid #21262d; }
+    .proc-log { background: #0d1117; color: #c9d1d9; font-family: 'Courier New', monospace; font-size: 12px; padding: 12px; border-radius: 8px; max-height: 300px; overflow-y: auto; white-space: pre-wrap; border: 1px solid #21262d; }
+    .tab-active { color: #3b82f6 !important; border-bottom: 2px solid #3b82f6 !important; }
+    .tab-inactive { color: #64748b !important; border-bottom: 2px solid transparent !important; }
+    .tab-inactive:hover { color: #94a3b8 !important; }
+    .module-card { background: rgba(21,29,43,0.8); border: 1px solid rgba(59,130,246,0.15); border-radius: 8px; padding: 16px; transition: all 0.2s; }
+    .module-card:hover { border-color: rgba(59,130,246,0.3); }
+    .pkg-item { padding: 6px 10px; border-bottom: 1px solid #21262d; font-family: 'Courier New', monospace; font-size: 12px; }
+    .pkg-item:last-child { border-bottom: none; }
 </style>
 
-<div class="ui segment">
-    <h3 class="ui grey header"><i class="icon linux"></i> Alpine Linux</h3>
-    <div class="ui top attached tabular menu">
-        <a class="item active" data-tab="tab-terminal"><i class="icon terminal"></i> Terminal</a>
-        <a class="item" data-tab="tab-packages"><i class="icon box"></i> Packages</a>
-        <a class="item" data-tab="tab-procs"><i class="icon tasks"></i> Processes</a>
-        <a class="item" data-tab="tab-modules"><i class="icon cubes"></i> Modules</a>
-        <a class="item" data-tab="tab-startup"><i class="icon rocket"></i> Startup</a>
-    </div>
+<!-- Tabs -->
+<div class="flex border-b border-slate-700/50 mb-4">
+    <button class="px-4 py-2.5 text-sm font-medium tab-active" onclick="showAlpineTab('terminal')" id="tab-terminal">Terminal</button>
+    <button class="px-4 py-2.5 text-sm font-medium tab-inactive" onclick="showAlpineTab('packages')" id="tab-packages">Packages</button>
+    <button class="px-4 py-2.5 text-sm font-medium tab-inactive" onclick="showAlpineTab('processes')" id="tab-processes">Processes</button>
+    <button class="px-4 py-2.5 text-sm font-medium tab-inactive" onclick="showAlpineTab('modules')" id="tab-modules">Modules</button>
+    <button class="px-4 py-2.5 text-sm font-medium tab-inactive" onclick="showAlpineTab('startup')" id="tab-startup">Startup</button>
+</div>
 
-    <!-- TERMINAL TAB -->
-    <div class="ui bottom attached tab segment active" data-tab="tab-terminal">
-        <div style="margin-bottom:8px;">
-            <button class="ui tiny button" onclick="resetTerm()"><i class="icon redo"></i> Reset</button>
-            <span style="color:#8b949e;font-size:12px;margin-left:8px;">Working dir: <code id="term-cwd">/root</code></span>
-        </div>
-        <div id="term-container">
-            <div id="term-output">
-                <div class="cmd-line"># Alpine Linux Terminal (proot)</div>
-                <div class="out-line"># Type commands below. Output appears live.</div>
-                <div class="out-line"></div>
-            </div>
-            <div id="term-input-area">
-                <span class="prompt" id="term-prompt">/root #</span>
-                <input type="text" id="term-input" placeholder="Type command..." autofocus autocomplete="off">
-            </div>
-            <div id="term-status">Ready — polling every 500ms</div>
+<!-- ===== TERMINAL TAB ===== -->
+<div id="alpine-terminal">
+    <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-3">
+            <button onclick="resetTerm()" class="btn-ghost text-xs flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                Reset
+            </button>
+            <span class="text-slate-500 text-xs">Working dir: <code class="text-accent-green" id="term-cwd">/root</code></span>
         </div>
     </div>
+    <div class="term-container">
+        <div class="term-output" id="term-output">
+            <div class="sys"># Alpine Linux Terminal (proot)</div>
+            <div class="sys"># Type commands below. Output appears live.</div>
+            <div class="out"></div>
+        </div>
+        <div class="term-input-bar">
+            <span class="term-prompt" id="term-prompt">/root #</span>
+            <input type="text" id="term-input" class="term-input" placeholder="Type command..." autofocus autocomplete="off">
+        </div>
+        <div class="term-status">Ready — polling every 500ms</div>
+    </div>
+</div>
 
-    <!-- PACKAGES TAB -->
-    <div class="ui bottom attached tab segment" data-tab="tab-packages">
-        <form id="pkgForm" class="ui form" autocomplete="off">
-            <div class="field">
-                <label>APK Command / Packages</label>
-                <div class="ui action input">
-                    <input type="text" id="pkgCmd" placeholder="add curl" value="list --installed">
-                    <button class="ui primary button" id="runPkg" type="submit"><i class="icon play"></i> Run</button>
-                </div>
-            </div>
-        </form>
-        <div class="ui divider"></div>
-        <h4 class="ui grey header">Installed Packages</h4>
-        <div id="pkg-list" class="ui list" style="max-height:250px; overflow-y:auto; padding:10px; border:1px solid #ddd; border-radius:4px;">
-            <div class="item" style="color:#999;">Run <code>list --installed</code> to scan packages.</div>
+<!-- ===== PACKAGES TAB ===== -->
+<div id="alpine-packages" style="display:none;">
+    <div class="glass rounded-xl p-4 mb-4">
+        <h3 class="text-white font-semibold text-sm mb-3">APK Package Manager</h3>
+        <div class="flex gap-2">
+            <input type="text" id="pkgCmd" placeholder="add curl" value="list --installed"
+                class="flex-1 px-3 py-2 bg-bg-card border border-slate-700 rounded-lg text-slate-200 text-sm focus:border-accent-blue outline-none">
+            <button onclick="runPkg()" id="runPkgBtn" class="btn-primary text-sm flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Run
+            </button>
         </div>
     </div>
-
-    <!-- PROCESSES TAB -->
-    <div class="ui bottom attached tab segment" data-tab="tab-procs">
-        <div style="margin-bottom:8px;">
-            <button class="ui tiny green button" onclick="supStart()"><i class="icon play"></i> Start Supervisor</button>
-            <button class="ui tiny button" onclick="supCmd('LIST_PROCS')"><i class="icon list"></i> List Processes</button>
-            <button class="ui tiny blue button" onclick="supCmd('START_SSHD')"><i class="icon server"></i> Start SSH (2222)</button>
-            <button class="ui tiny red button" onclick="supCmd('STOP_SSHD')"><i class="icon stop"></i> Stop SSH</button>
-            <button class="ui tiny button" onclick="supCmd('STOP_SSHD')" style="display:none;"></button>
-            <button class="ui tiny red button" onclick="supStop()" style="margin-left:8px;"><i class="icon power off"></i> Stop Supervisor</button>
+    <div class="glass rounded-xl overflow-hidden">
+        <div class="px-4 py-3 border-b border-slate-700/50">
+            <h4 class="text-white font-semibold text-sm">Installed Packages</h4>
         </div>
-        <div id="proc-log"># Supervisor log will appear here.\n# Click "Start Supervisor" then "List Processes".</div>
-        <div style="margin-top:8px;">
-            <button class="ui tiny button" onclick="supLog()"><i class="icon refresh"></i> Refresh Log</button>
+        <div id="pkg-list" class="max-h-64 overflow-y-auto">
+            <div class="pkg-item text-slate-500">Run <code>list --installed</code> to scan packages.</div>
         </div>
     </div>
+</div>
 
-    <!-- MODULES TAB -->
-    <div class="ui bottom attached tab segment" data-tab="tab-modules">
-        <p class="ui small message">One-click toolkits that install packages + config inside Alpine. Each runs an <code>apk</code> install script.</p>
-        <div class="ui cards" id="module-cards">
-            <div class="ui active inline loader"></div>
-        </div>
-        <div id="module-status" style="color:#888;margin-top:8px;"></div>
+<!-- ===== PROCESSES TAB ===== -->
+<div id="alpine-processes" style="display:none;">
+    <div class="flex items-center gap-2 mb-4 flex-wrap">
+        <button onclick="supStart()" class="btn-success text-xs flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/></svg>
+            Start Supervisor
+        </button>
+        <button onclick="supCmd('LIST_PROCS')" class="btn-ghost text-xs flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+            List Processes
+        </button>
+        <button onclick="supCmd('START_SSHD')" class="btn-ghost text-xs flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>
+            Start SSH (2222)
+        </button>
+        <button onclick="supCmd('STOP_SSHD')" class="btn-ghost text-xs flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/></svg>
+            Stop SSH
+        </button>
+        <button onclick="supStop()" class="btn-danger text-xs flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.242 2.829a5 5 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3m8.293 8.293l1.414 1.414"/></svg>
+            Stop Supervisor
+        </button>
     </div>
+    <div class="proc-log" id="proc-log"># Supervisor log will appear here.
+# Click "Start Supervisor" then "List Processes".</div>
+    <div class="mt-3">
+        <button onclick="supLog()" class="btn-ghost text-xs flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            Refresh Log
+        </button>
+    </div>
+</div>
 
-    <!-- STARTUP TAB -->
-    <div class="ui bottom attached tab segment" data-tab="tab-startup">
-        <p class="ui small message">Configure commands to run automatically when Alpine is deployed. Saved to <code>/etc/l3mon-startup.sh</code> and executed by the supervisor at boot.</p>
-        <div class="ui form">
-            <div class="field">
-                <label>Startup Script (one command per line)</label>
-                <textarea id="startup-script" rows="8" placeholder="apk add nmap&#10;sshd -p 2222&#10;echo Alpine ready" style="font-family:'Courier New',monospace;"></textarea>
-            </div>
-            <button class="ui primary button" onclick="saveStartup()"><i class="icon save"></i> Save Startup Script</button>
-            <button class="ui button" onclick="loadStartup()"><i class="icon download"></i> Load Current</button>
+<!-- ===== MODULES TAB ===== -->
+<div id="alpine-modules" style="display:none;">
+    <div class="bg-bg-card border border-slate-700/50 rounded-lg p-3 mb-4">
+        <p class="text-slate-400 text-sm">One-click toolkits that install packages + config inside Alpine. Each runs an <code class="text-accent-cyan">apk</code> install script.</p>
+    </div>
+    <div class="grid grid-cols-2 gap-3" id="module-cards">
+        <div class="text-slate-500 text-sm col-span-2 text-center py-8">Loading modules...</div>
+    </div>
+    <div id="module-status" class="text-slate-500 text-xs mt-3"></div>
+</div>
+
+<!-- ===== STARTUP TAB ===== -->
+<div id="alpine-startup" style="display:none;">
+    <div class="bg-bg-card border border-slate-700/50 rounded-lg p-3 mb-4">
+        <p class="text-slate-400 text-sm">Configure commands to run automatically when Alpine is deployed. Saved to <code class="text-accent-cyan">/etc/l3mon-startup.sh</code> and executed by the supervisor at boot.</p>
+    </div>
+    <div class="space-y-3">
+        <div>
+            <label class="block text-slate-400 text-sm mb-1.5">Startup Script (one command per line)</label>
+            <textarea id="startup-script" rows="8" placeholder="apk add nmap&#10;sshd -p 2222&#10;echo Alpine ready"
+                class="w-full px-3 py-2 bg-bg-card border border-slate-700 rounded-lg text-slate-200 font-mono text-sm focus:border-accent-blue outline-none resize-none"></textarea>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="saveStartup()" class="btn-primary text-sm flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                Save Startup Script
+            </button>
+            <button onclick="loadStartup()" class="btn-ghost text-sm flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Load Current
+            </button>
         </div>
     </div>
 </div>
@@ -109,20 +153,29 @@
     var histIdx = -1;
 
     // Tab switching
-    $('.menu .item').tab();
+    function showAlpineTab(tab) {
+        ['terminal', 'packages', 'processes', 'modules', 'startup'].forEach(function(t) {
+            var el = document.getElementById('alpine-' + t);
+            if (el) el.style.display = t === tab ? '' : 'none';
+            var btn = document.getElementById('tab-' + t);
+            if (btn) {
+                btn.className = 'px-4 py-2.5 text-sm font-medium ' + (t === tab ? 'tab-active' : 'tab-inactive');
+            }
+        });
+    }
 
     // ===== TERMINAL =====
     function appendOutput(text, cls) {
         var out = document.getElementById('term-output');
         var div = document.createElement('div');
-        div.className = cls || 'out-line';
+        div.className = cls || 'out';
         div.textContent = text;
         out.appendChild(div);
         out.scrollTop = out.scrollHeight;
     }
     function updateCwd(cwd) {
         document.getElementById('term-cwd').textContent = cwd;
-        var short = cwd === '/' ? '/' : (cwd.replace(/\/+$/,'') || '/');
+        var short = cwd === '/' ? '/' : (cwd.replace(/\/+$/, '') || '/');
         document.getElementById('term-prompt').textContent = short + ' #';
     }
     function pollOutput() {
@@ -133,8 +186,8 @@
                     var m = displayCmd.match(/^cd\s+'[^']*'\s*&&\s*(.+)/);
                     if (m) displayCmd = m[1];
                     if (/^cd\s+'[^']*'$/.test(displayCmd)) displayCmd = '';
-                    if (displayCmd) appendOutput('$ ' + displayCmd, 'cmd-line');
-                    if (e.output) appendOutput(e.output, 'out-line');
+                    if (displayCmd) appendOutput('$ ' + displayCmd, 'cmd');
+                    if (e.output) appendOutput(e.output, 'out');
                 });
             }
             if (d.cwd) updateCwd(d.cwd);
@@ -146,17 +199,17 @@
         if (!cmd) return;
         cmdHistory.push(cmd);
         histIdx = cmdHistory.length;
-        appendOutput('$ ' + cmd, 'cmd-line');
+        appendOutput('$ ' + cmd, 'cmd');
         document.getElementById('term-status').textContent = 'Running: ' + cmd + '...';
         inp.value = '';
         $.post('/alpine/term/' + deviceID + '/cmd', { cmd: cmd }, function(d) {
-            if (d.error) { appendOutput('Error: ' + d.error, 'err-line'); document.getElementById('term-status').textContent = 'Error'; }
+            if (d.error) { appendOutput('Error: ' + d.error, 'err'); document.getElementById('term-status').textContent = 'Error'; }
             else { document.getElementById('term-status').textContent = 'Sent'; if (d.cwd) updateCwd(d.cwd); setTimeout(pollOutput, 800); setTimeout(pollOutput, 1600); }
         });
     }
     function resetTerm() {
         $.post('/term/' + deviceID + '/alpine/reset', function(d) {
-            document.getElementById('term-output').innerHTML = '<div class="out-line"># Session reset</div>';
+            document.getElementById('term-output').innerHTML = '<div class="sys"># Session reset</div>';
             updateCwd(d.cwd || '/root');
         });
     }
@@ -165,29 +218,45 @@
     function runPkg() {
         var cmd = document.getElementById('pkgCmd').value.trim();
         if (!cmd) return;
-        var btn = document.getElementById('runPkg');
-        btn.classList.add('loading');
+        var btn = document.getElementById('runPkgBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Running...';
         $.post('/manage/' + deviceID + '/packages', { cmd: cmd }, function(d) {
-            btn.classList.remove('loading');
+            btn.disabled = false;
+            btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/></svg> Run';
             if (d.error) showNotification('#f03434', d.error);
-            else setTimeout(loadPkgs, 3000);
+            else {
+                showNotification('#2ecc71', 'Command sent');
+                setTimeout(function() {
+                    $.get('/term/' + deviceID + '/alpine/output', function(out) {
+                        if (out.entries && out.entries.length > 0) {
+                            var last = out.entries[out.entries.length - 1];
+                            if (last.output) {
+                                var lines = last.output.split('\n').filter(function(l) { return l.trim(); });
+                                var html = '';
+                                lines.forEach(function(line) {
+                                    html += '<div class="pkg-item text-slate-300">' + line + '</div>';
+                                });
+                                document.getElementById('pkg-list').innerHTML = html || '<div class="pkg-item text-slate-500">No packages found.</div>';
+                            }
+                        }
+                    });
+                }, 3000);
+            }
         });
-    }
-    function loadPkgs() {
-        $.get('/manage/' + deviceID + '/packages', function(html) { /* not used */ });
     }
 
     // ===== PROCESSES =====
     function supLogText(t) { var el = document.getElementById('proc-log'); el.textContent += t + '\n'; el.scrollTop = el.scrollHeight; }
     function supStart() {
-        $.post('/alpine/proc/' + deviceID + '/start', function(d) { supLogText(d.error ? 'Error: '+d.error : 'Supervisor started'); });
+        $.post('/alpine/proc/' + deviceID + '/start', function(d) { supLogText(d.error ? 'Error: ' + d.error : '✓ Supervisor started'); });
     }
     function supStop() {
-        $.post('/alpine/proc/' + deviceID + '/stop', function(d) { supLogText(d.error ? 'Error: '+d.error : 'Supervisor stopped'); });
+        $.post('/alpine/proc/' + deviceID + '/stop', function(d) { supLogText(d.error ? 'Error: ' + d.error : '✓ Supervisor stopped'); });
     }
     function supCmd(cmd) {
         $.post('/alpine/proc/' + deviceID + '/cmd', { cmd: cmd }, function(d) {
-            supLogText(d.error ? 'Error: '+d.error : 'Sent: ' + cmd);
+            supLogText(d.error ? 'Error: ' + d.error : '→ Sent: ' + cmd);
             setTimeout(supLog, 1500);
         });
     }
@@ -206,29 +275,60 @@
     }
 
     // ===== MODULES =====
+    var moduleIcons = {
+        'network-scan': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>',
+        'recon': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>',
+        'reverse-ssh': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>',
+        'wifi': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.858 15.355-5.858 21.213 0"/></svg>',
+        'exploit-dev': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>',
+        'proxychains': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>'
+    };
+    var moduleColors = {
+        'network-scan': 'from-accent-red to-accent-amber',
+        'recon': 'from-accent-blue to-accent-cyan',
+        'reverse-ssh': 'from-accent-green to-accent-cyan',
+        'wifi': 'from-accent-purple to-accent-blue',
+        'exploit-dev': 'from-accent-amber to-accent-red',
+        'proxychains': 'from-accent-cyan to-accent-green'
+    };
     function loadModules() {
         $.get('/modules', function(d) {
             var container = document.getElementById('module-cards');
             container.innerHTML = '';
-            if (!d.modules || Object.keys(d.modules).length === 0) { container.innerHTML = '<div class="ui message">No modules.</div>'; return; }
+            if (!d.modules || Object.keys(d.modules).length === 0) {
+                container.innerHTML = '<div class="col-span-2 text-center py-8 text-slate-500">No modules available.</div>';
+                return;
+            }
             Object.keys(d.modules).forEach(function(key) {
                 var m = d.modules[key];
+                var icon = moduleIcons[key] || moduleIcons['recon'];
+                var color = moduleColors[key] || 'from-accent-blue to-accent-purple';
                 var card = document.createElement('div');
-                card.className = 'ui card';
-                card.innerHTML = '<div class="content"><div class="header"><i class="icon ' + m.icon + '"></i> ' + m.name + '</div><div class="description" style="margin:6px 0;">' + m.description + '</div><button class="ui tiny green button deploy-btn" data-module="' + key + '">Deploy</button></div>';
+                card.className = 'module-card';
+                card.innerHTML = '<div class="flex items-start gap-3">' +
+                    '<div class="w-10 h-10 bg-gradient-to-br ' + color + ' rounded-lg flex items-center justify-center flex-shrink-0">' + icon + '</div>' +
+                    '<div class="flex-1 min-w-0">' +
+                        '<h4 class="text-white font-semibold text-sm">' + m.name + '</h4>' +
+                        '<p class="text-slate-400 text-xs mt-1">' + m.description + '</p>' +
+                        '<button onclick="deployModule(\'' + key + '\', this)" class="btn-success text-xs mt-3 flex items-center gap-1.5">' +
+                            '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>' +
+                            'Deploy' +
+                        '</button>' +
+                    '</div>' +
+                '</div>';
                 container.appendChild(card);
             });
-            $('.deploy-btn').click(function() {
-                var key = $(this).data('module');
-                var btn = $(this);
-                btn.addClass('loading');
-                $('#module-status').text('Deploying ' + key + '...');
-                $.post('/manage/' + deviceID + '/modules/deploy', { module: key }, function(res) {
-                    btn.removeClass('loading');
-                    if (res.error) { showNotification('#f03434', res.error); $('#module-status').text(''); }
-                    else { showNotification('#2ecc71', res.message); $('#module-status').text(res.message); }
-                });
-            });
+        });
+    }
+    function deployModule(key, btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<svg class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Deploying...';
+        $('#module-status').text('Deploying ' + key + '...');
+        $.post('/manage/' + deviceID + '/modules/deploy', { module: key }, function(res) {
+            btn.disabled = false;
+            btn.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Deploy';
+            if (res.error) { showNotification('#f03434', res.error); $('#module-status').text(''); }
+            else { showNotification('#2ecc71', res.message); $('#module-status').text(res.message); }
         });
     }
 
@@ -247,9 +347,7 @@
                         var last = out.entries[out.entries.length - 1];
                         var txt = (last.output || '').replace(/cd '[^']*' && /, '').trim();
                         if (txt === 'EMPTY') txt = '';
-                        else {
-                            try { txt = atob(txt); } catch(e) { /* not base64, keep as-is */ }
-                        }
+                        else { try { txt = atob(txt); } catch(e) {} }
                         document.getElementById('startup-script').value = txt;
                     }
                 });
@@ -257,13 +355,13 @@
         });
     }
 
+    // ===== INIT =====
     $(function() {
         document.getElementById('term-input').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') sendTermCmd();
             else if (e.key === 'ArrowUp') { e.preventDefault(); if (histIdx > 0) { histIdx--; this.value = cmdHistory[histIdx]; } }
             else if (e.key === 'ArrowDown') { e.preventDefault(); if (histIdx < cmdHistory.length - 1) { histIdx++; this.value = cmdHistory[histIdx]; } else { histIdx = cmdHistory.length; this.value = ''; } }
         });
-        document.getElementById('pkgForm').addEventListener('submit', function(e) { e.preventDefault(); runPkg(); });
         pollInterval = setInterval(pollOutput, 500);
         pollOutput();
         loadModules();
