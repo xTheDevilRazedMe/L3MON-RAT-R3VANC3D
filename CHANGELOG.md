@@ -1,22 +1,44 @@
 # Changelog
 
-All notable changes to L3MON are documented here. **Every change MUST be logged before merging.**
+Significant changes to L3MON documented per release.
+
+> For granular change history, see [DEVLOG.md](DEVLOG.md).
 
 ---
 
-## 📋 RULE: Every Change Gets Documented
+## 📋 RULE: AI Agents Must Document Changes
 
-> **Before any code is committed, this changelog MUST be updated.**
+> **Any AI agent reading, editing, or making changes to this repository MUST follow this process:**
 >
-> - New features → Add under `### ✨ New Features`
-> - Bug fixes → Add under `### 🐛 Bug Fixes`
-> - UI changes → Add under `### 🎨 UI Changes`
-> - Backend changes → Add under `### 🔧 Backend Changes`
-> - Removed features → Add under `### ❌ Removed`
+> 1. **Log everything in [DEVLOG.md](DEVLOG.md)** — every file edit, every change, every fix
+> 2. **Promote significant items to this file** — only major features, fixes, and breaking changes
 >
-> Format: `- **Feature name** — brief description`
+> ### Dev Log Format (DEVLOG.md)
+> ```
+> ## [DATE] — HH:MM
+> - **File:** path/to/file.js
+> - **Change:** what was changed and why
+> ```
 >
-> If no section fits, create one. If unsure, add it anyway.
+> ### Changelog Format (this file)
+> ```
+> ### ✨ New Features
+> - **Feature name** — description
+>
+> ### 🐛 Bug Fixes
+> - **Fix name** — what was broken and how it was fixed
+>
+> ### 🎨 UI Changes
+> - **Change name** — what changed visually
+>
+> ### 🔧 Backend Changes
+> - **Change name** — what changed in the backend
+>
+> ### ❌ Removed
+> - **Feature name** — why it was removed
+> ```
+>
+> **If an AI agent makes a change and doesn't log it, the change is incomplete.**
 
 ---
 
@@ -123,7 +145,7 @@ All notable changes to L3MON are documented here. **Every change MUST be logged 
 | Version | Date | Key Changes |
 |---------|------|-------------|
 | 3.0.0 | Original | Base L3MON from GitHub (D3VL/efxtv) |
-| 3.1.0 | Aug 12–13, 2026 | Full revamp: AI Agent, Exploit Scanner, Module Store, Dark Theme, Device Nicknames, Auto-Extraction |
+| 3.1.0 | Aug 12–13, 2026 | Full revamp: AI Agent, Dark Theme, Device Nicknames, Auto-Extraction |
 
 ---
 

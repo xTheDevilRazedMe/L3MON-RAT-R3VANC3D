@@ -203,15 +203,12 @@ See [CHANGELOG.md](CHANGELOG.md) for full version history.
 
 ## 📋 Contributing Rule
 
-> **Every change MUST be documented in [CHANGELOG.md](CHANGELOG.md) before merging.**
+> **Any AI agent reading, editing, or making changes to this repository MUST follow this process:**
 >
-> - New features → `### ✨ New Features`
-> - Bug fixes → `### 🐛 Bug Fixes`
-> - UI changes → `### 🎨 UI Changes`
-> - Backend changes → `### 🔧 Backend Changes`
-> - Removed features → `### ❌ Removed`
+> 1. **Log everything in [DEVLOG.md](DEVLOG.md)** — every file edit, every change, every fix
+> 2. **Promote significant items to [CHANGELOG.md](CHANGELOG.md)** — only major features, fixes, and breaking changes
 >
-> Format: `- **Feature name** — brief description`
+> **If an AI agent makes a change and doesn't log it, the change is incomplete.**
 
 ---
 
