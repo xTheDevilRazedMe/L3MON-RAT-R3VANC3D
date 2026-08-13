@@ -1,29 +1,40 @@
 <!DOCTYPE html>
-<html>
-
+<html class="dark">
 <% include partials/head.ejs %>
+<body class="bg-bg-dark min-h-screen">
+    <% include partials/header-new.ejs %>
+    <% include partials/sidebar-new.ejs %>
 
+    <!-- Main content -->
+    <div class="ml-56 mt-14 p-6 space-y-6">
+        <!-- Page title -->
+        <div class="flex items-center justify-between">
+            <h1 class="text-2xl font-bold text-white">Event Log</h1>
+            <button onclick="window.location.reload()" class="btn-ghost text-sm flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                Refresh
+            </button>
+        </div>
 
-<body>
-    <script>
-        gtag('event', 'screen_view', {
-            'screen_name': 'logs',
-            'app_name': 'L3MON'
-        });
-    </script>
-    <div class="ui container">
-        <% include partials/header.ejs %>
-        <div class="ui segment">
-            <div class="logs">
+        <!-- Log viewer -->
+        <div class="logs">
+            <% if (logs && logs.length > 0) { %>
                 <% logs.forEach((log) => { %>
                 <div class="logitm <%= log.type %>">
                     <%= new Date(log.time).toLocaleString('en-GB', { timeZone: 'UTC' }) %> =>
-                    <%= log.type %> | <%= log.message %> </div>
+                    <%= log.type %> | <%= log.message %>
+                </div>
                 <% }) %>
-            </div>
+            <% } else { %>
+                <div class="text-center py-12 text-slate-500">
+                    <p>No logs yet.</p>
+                </div>
+            <% } %>
         </div>
     </div>
+
+    <% include partials/aiPanel.ejs %>
+
     <% include partials/footer.ejs %>
 </body>
-
 </html>

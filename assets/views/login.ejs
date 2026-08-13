@@ -47,7 +47,11 @@
                 </button>
                 <% if (typeof error !== 'undefined' && error) { %>
                 <div class="bg-accent-red/10 border border-accent-red/30 rounded-lg p-3 text-accent-red text-sm text-center">
-                    Invalid username or password
+                    <% if (error === 'badLogin') { %>Invalid username or password
+                    <% } else if (error === 'missingUsername') { %>Please enter your username
+                    <% } else if (error === 'missingPassword') { %>Please enter your password
+                    <% } else { %>Login failed
+                    <% } %>
                 </div>
                 <% } %>
             </form>

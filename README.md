@@ -1,322 +1,243 @@
-# L3MON — Complete Installation Guide
+<div align="center">
 
-> **L3MON  — Android Remote Administration Tool**
-> **Repo:** https://github.com/efxtv/L3MON  
-> **Archived:** October 29, 2025 — Read-only / Educational preservation  
-> **Stack:** Node.js + Express + Socket.IO + Java 8 / apktool
+# 📱 L3MON RAT
 
-You must have a Linux lab to test this tool safely in an isolated environment. [JOIN US TO KNOW MORE](https://t.me/+egpQDeBtGk8wYWU1)
+**Remote Android Management Suite**
 
-Cloud-based remote Android management suite, powered by NodeJS.
+A cloud-powered Android administration platform built with Node.js, Express, and Socket.IO.
 
-**Features:** GPS Logging · Microphone Recording · Contacts · SMS Logs / Send SMS · Call Logs · Installed Apps · Stub Permissions · Live Clipboard Logging · Live Notification Logging · WiFi Networks · File Explorer & Downloader · Command Queuing · Built-in APK Builder
+*Revamped by xTheDevilRazedMe*
 
----
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Node](https://img.shields.io/badge/node-14.x--18.x-brightgreen.svg)](https://nodejs.org)
+[![Java](https://img.shields.io/badge/java-8-orange.svg)](https://www.oracle.com/java/technologies/javase-jdk8-downloads.html)
 
-## 0. Prerequisites
-
-You MUST use **Java 1.8.0 / JRE 8**. Any other version will break APK building. Issues not using Java 8 will be closed without response.
-
-Required:
-- Java Runtime Environment 8 (OpenJDK 1.8 / Oracle JRE 8)
-- Node.js 14.x – 18.x LTS + npm
-- Git, curl, wget, openssl
-- PM2 process manager
-- A server / VPS / local machine with port **22533** open
-- Android SDK build-tools / apktool (auto-installed via scripts below)
-- 2GB RAM minimum, Ubuntu 20.04/22.04 recommended
+</div>
 
 ---
 
-## 1. Install Java 8 — OS Specific
+## ⚡ Features
 
-### A. Debian / Ubuntu / Kali / Ubuntu chroot
-```bash
-sudo apt update && sudo apt upgrade -y
-sudo apt install -y wget curl git nano openssl nodejs npm openjdk-8-jdk openjdk-8-jre
-
-# verify
-java -version
-# must show: openjdk version "1.8.0_xxx"
-
-# install apktool for L3MON
-source <(curl -fsSL https://raw.githubusercontent.com/efxtv/npm/main/apktool/apktool-kali-ubuntu.sh)
-```
-
-Set Java 8 as default if you have multiple versions:
-```bash
-sudo update-alternatives --config java
-# select java-8-openjdk
-```
-
-### B. Termux (Android)
-```bash
-pkg update && pkg upgrade -y
-pkg install -y git curl wget nodejs-lts openssl-tool nano
-
-# L3MON Termux Java 8 workaround
-source <(curl -fsSL https://raw.githubusercontent.com/efxtv/npm/main/apktool/apktool-termux.sh)
-source <(curl -fsSL https://raw.githubusercontent.com/efxtv/npm/main/L3mon-no-java8.sh)
-
-# install EMSF helper
-curl -L -o $PREFIX/bin/emsf https://github.com/efxtv/EMSF/blob/main/termux/emsf?raw=true
-chmod +x $PREFIX/bin/emsf
-```
-
-### C. Fedora / Oracle Linux / Red Hat / CentOS
-```bash
-su -c "yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel git curl wget nodejs npm openssl"
-# or dnf:
-sudo dnf install -y java-1.8.0-openjdk-devel nodejs npm git
-
-source <(curl -fsSL https://raw.githubusercontent.com/efxtv/npm/main/apktool/apktool-kali-ubuntu.sh)
-java -version
-```
-
-### D. Windows 10/11
-1. Download **Oracle JRE 8** / **JDK 8u361**:  
-   https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
-2. Install, then add to PATH:
-   `C:\Program Files\Java\jre1.8.0_xxx\bin`
-3. Verify in CMD:
-   ```
-   java -version
-   ```
-   Must show 1.8.0
-4. Install Node.js LTS from: https://nodejs.org/en/download
-5. Install Git for Windows: https://git-scm.com/download/win
+| Category | Capabilities |
+|----------|-------------|
+| 📍 **Location** | Real-time GPS tracking, location history, map visualization |
+| 📞 **Communication** | SMS reader/sender, call logs, contacts access |
+| 🎤 **Surveillance** | Microphone recording, live mic streaming, camera capture |
+| 📋 **Data** | Clipboard monitoring, notification logging, keylogger |
+| 📁 **Files** | File browser, file download, app management |
+| 🖥️ **Remote Control** | Shell terminal, Alpine Linux environment, package manager |
+| 🔒 **Security** | Device admin, hide/show app, exploit recon & CVE scanning |
+| 🤖 **AI Agent** | Built-in AI assistant with tool-calling capabilities |
+| 📦 **Payload Builder** | Custom APK builder with tunnel support |
+| 🔍 **Exploit Scanner** | NVD CVE database + searchsploit integration |
+| 🐧 **Alpine Modules** | Deployable toolkits (nmap, ssh, python, etc.) |
 
 ---
 
-## 2. Clone L3MON
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Java 8** (JDK/JRE 1.8.0) — required for APK building
+- **Node.js** 14.x–18.x LTS
+- **npm**
+
+### Installation
 
 ```bash
-git clone https://github.com/efxtv/L3MON.git
+# Clone the repository
+git clone https://github.com/your-repo/L3MON.git
 cd L3MON
-```
 
-> Original project is archived. The maintainers distributed releases via Telegram: https://t.me/+egpQDeBtGk8wYWU1
-
----
-
-## 3. Install Node Dependencies + PM2
-
-```bash
-# Install PM2 globally
-sudo npm install pm2 -g
-
-# Install project dependencies
+# Install dependencies
 npm install
 
-# Audit / fix (as per upstream README)
-npm audit fix
-npm audit
-npm audit fix --force
+# Start the server
+node index.js
 ```
 
-If you get `node-gyp` / `sqlite` errors:
-```bash
-sudo apt install -y build-essential python3
-npm install --build-from-source
-```
+### First Run
+
+1. Open `http://localhost:22533` in your browser
+2. Login with default credentials (check `maindb.json`)
+3. Go to **Build Payload** to create your APK
+4. Install the APK on your target device
+5. Device appears on the dashboard automatically
 
 ---
 
-## 4. First Run & Configure Admin Login
+## 🔧 Configuration
 
-```bash
-# start once to generate maindb.json
-pm2 start index.js --name l3mon
-pm2 stop l3mon
-```
+### Admin Credentials
 
-Edit credentials:
-```bash
-nano maindb.json
-```
+Edit `maindb.json` to set your admin password:
 
-Under `admin`:
 ```json
-"admin": {
-  "username": "your_admin_username",
-  "password": "5d41402abc4b2a76b9719d911017c592"
-}
-```
-
-Generate MD5 password (LOWERCASE):
-```bash
-# Linux / macOS / Termux
-echo -n "YourPasswordHere" | openssl md5 | awk '{print $2}'
-
-# Example: efxtv
-# echo -n efxtv | openssl md5
-# -> 3c8e4f8e5c1c8f7e9b0a1d2c3e4f5a6b  (use your actual output, lowercase)
-```
-
-Save file, then:
-```bash
-pm2 restart all
-# or
-pm2 start index.js --name l3mon
-pm2 save
-pm2 startup
-# run the command PM2 prints to enable autostart
-```
-
-Access dashboard:
-```
-http://127.0.0.1:22533
-http://YOUR_SERVER_IP:22533
-```
-
-Login with the username + plain-text password you hashed.
-
----
-
-## 5. Firewall / Port
-
-L3MON default: **TCP 22533**
-
-Ubuntu / UFW:
-```bash
-sudo ufw allow 22533/tcp
-sudo ufw reload
-```
-
-Cloud VPS: open 22533 in your security group / firewall panel.
-
-Reverse proxy (optional nginx):
-```nginx
-server {
-  listen 80;
-  server_name yourdomain.com;
-  location / {
-    proxy_pass http://127.0.0.1:22533;
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
+{
+  "admin": {
+    "username": "admin",
+    "password": "5d41402abc4b2a76b9719d911017c592"
   }
 }
 ```
 
----
-
-## 6. Build Your First APK Client
-
-1. Login to dashboard → **Build**
-2. Set:
-   - **LHOST:** your public server IP / domain
-   - **LPORT:** 22533
-   - App name / icon as needed
-3. Click **Build**
-4. Download APK from `clientData/` or dashboard
-5. Install on your **OWN test device** → Allow all permissions:
-   - Location, Microphone, SMS, Phone, Contacts, Storage, Notifications, Accessibility
-6. Client appears in dashboard → Live
-
-Build troubleshooting:
-- `Java version error` → `java -version` MUST be 1.8.0
-- `apktool not found` → re-run the apktool install script from Step 1
-- `maindb.json missing` → run `pm2 start index.js` once, stop, then configure
-- `client offline` → check port 22533 is reachable: `curl http://YOUR_IP:22533`
-
----
-
-## 7. PM2 Useful Commands
-
+Generate MD5 hash:
 ```bash
-pm2 logs l3mon          # live logs
-pm2 monit               # monitor
-pm2 stop l3mon
-pm2 restart l3mon
-pm2 delete l3mon
-pm2 list
-pm2 save
+echo -n "YourPassword" | openssl md5 | awk '{print $2}'
 ```
 
-Update / reinstall:
-```bash
-pm2 stop all
-git pull
-npm install
-pm2 restart all
-```
+### Ports
+
+| Port | Purpose |
+|------|---------|
+| 22533 | Web dashboard |
+| 22222 | Socket.IO (device connections) |
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `L3MON_TUNNEL` | Enable/disable tunnel | `true` |
+| `L3MON_TUNNEL_SUBDOMAIN` | Custom tunnel subdomain | random |
+| `L3MON_CLIENT_URL` | Override client connection URL | auto |
 
 ---
 
-## 8. Uninstall / Cleanup
-
-```bash
-pm2 stop l3mon
-pm2 delete l3mon
-pm2 save
-cd ..
-rm -rf L3MON
-```
-
-Remove Java 8 (Ubuntu):
-```bash
-sudo apt remove openjdk-8-*
-```
-
----
-
-## 9. File Structure
+## 📂 Project Structure
 
 ```
 L3MON/
-├── index.js              # Node server entry
-├── maindb.json           # users / clients DB – EDIT FOR LOGIN
-├── maindb.json.back
-├── package.json
-├── app/factory/          # APK build templates
-├── clientData/           # built APKs output
+├── index.js                 # Server entry point
+├── maindb.json              # Database (users, clients, settings)
+├── package.json             # Dependencies
 ├── includes/
+│   ├── expressRoutes.js     # API routes & page handlers
+│   ├── clientManager.js     # Device connection management
+│   ├── const.js             # Configuration constants
+│   ├── apkBuilder.js        # APK build & sign logic
+│   ├── tunnelManager.js     # LocalTunnel management
+│   ├── exploitScanner.js    # CVE scanner (NVD + searchsploit)
+│   └── modules.js           # Alpine module store
 ├── assets/
-├── error-and-install/    # GIF help guides
-└── L3mon_Dockerfile
+│   ├── views/               # EJS templates
+│   │   ├── index.ejs        # Dashboard
+│   │   ├── builder.ejs      # APK builder
+│   │   ├── logs.ejs         # Event log
+│   │   ├── deviceManager.ejs # Device pages container
+│   │   ├── deviceManagerPages/ # Individual device pages
+│   │   └── partials/        # Header, sidebar, footer, AI panel
+│   └── webpublic/           # Static assets (CSS, JS, images)
+├── app/factory/             # APK templates & tools
+├── clientData/              # Per-device data storage
+├── README.md                # This file
+└── CHANGELOG.md             # Version history
 ```
 
 ---
 
-## 10. Quick One-Line Installer (Ubuntu 22.04)
+## 🛡️ Device Pages
 
-```bash
-sudo apt update && sudo apt install -y openjdk-8-jdk openjdk-8-jre nodejs npm git curl openssl && \
-git clone https://github.com/efxtv/L3MON.git && cd L3MON && \
-source <(curl -fsSL https://raw.githubusercontent.com/efxtv/npm/main/apktool/apktool-kali-ubuntu.sh) && \
-sudo npm install pm2 -g && npm install && npm audit fix --force && \
-pm2 start index.js --name l3mon && echo "Open http://localhost:22533"
-# then stop and set your maindb.json admin MD5 password
-```
-
-
-## Self Help
-| [![Git Clone](https://github.com/efxtv/L3MON/raw/main/error-and-install/1git-clone.gif)](https://github.com/efxtv/L3MON/raw/main/error-and-install/1git-clone.gif) | [![Prerequisites](https://github.com/efxtv/L3MON/raw/main/error-and-install/2prerequisites.gif)](https://github.com/efxtv/L3MON/raw/main/error-and-install/2prerequisites.gif) | [![Install L3MON](https://github.com/efxtv/L3MON/raw/main/error-and-install/3install-L3MON.gif)](https://github.com/efxtv/L3MON/raw/main/error-and-install/3install-L3MON.gif) |
-|---|---|---|
-| [![Setup Password MD5](https://github.com/efxtv/L3MON/raw/main/error-and-install/4asetup-password-md5.gif)](https://github.com/efxtv/L3MON/raw/main/error-and-install/4asetup-password-md5.gif) | [![Fix Java 8 in Termux](https://github.com/efxtv/L3MON/raw/main/error-and-install/4fix-java8-in-termux.gif)](https://github.com/efxtv/L3MON/raw/main/error-and-install/4fix-java8-in-termux.gif) | [![Missing mainDB.json](https://github.com/efxtv/L3MON/raw/main/error-and-install/5amissing-maindb.json.gif)](https://github.com/efxtv/L3MON/raw/main/error-and-install/5amissing-maindb.json.gif) |
-| [![Build](https://github.com/efxtv/L3MON/raw/main/error-and-install/5build.gif)](https://github.com/efxtv/L3MON/raw/main/error-and-install/5build.gif) | [![Build Install](https://github.com/efxtv/L3MON/raw/main/error-and-install/6build-install.gif)](https://github.com/efxtv/L3MON/raw/main/error-and-install/6build-install.gif) | [![Allow Permissions](https://github.com/efxtv/L3MON/raw/main/error-and-install/7allow-permissions.gif)](https://github.com/efxtv/L3MON/raw/main/error-and-install/7allow-permissions.gif) |
-
-[![Live Client](https://github.com/efxtv/L3MON/raw/main/error-and-install/8live-client.gif)](https://github.com/efxtv/L3MON/raw/main/error-and-install/8live-client.gif)
-## Thanks
-L3MON Builds off and utilizes several open-source software, Without these, L3MON Wouldn't be what it is!
- - Inspiration for the project and the basic building blocks for the Android App are based on [AhMyth](https://github.com/AhMyth/AhMyth-Android-RAT) 
- - [express](https://github.com/expressjs/express)
- - [node-geoip](https://github.com/bluesmoon/node-geoip)
- - [lowdb](https://github.com/typicode/lowdb)
- - [socket.io](https://github.com/socketio/socket.io)
- - [Open Street Map](https://www.openstreetmap.org)
- - [Leaflet](https://leafletjs.com/)
-
+| Page | Description |
+|------|-------------|
+| 📊 **Info** | Device details, system info, quick actions |
+| 🖥️ **Terminal** | Remote shell access |
+| 📍 **Location** | GPS tracking with map |
+| 💬 **SMS** | Read & send SMS messages |
+| 📞 **Calls** | Call log history |
+| 👥 **Contacts** | Contact list |
+| 📋 **Clipboard** | Clipboard history |
+| 🎤 **Microphone** | Audio recording & live streaming |
+| 📷 **Camera** | Photo capture |
+| 🔑 **Keylogger** | Notification-based keylogger |
+| 📁 **Files** | Remote file browser |
+| 🐧 **Alpine** | Linux environment terminal |
+| 📦 **Packages** | Alpine package manager |
+| 🔍 **Exploits** | CVE scanner & exploit recon |
+| 📶 **WiFi** | WiFi network scanner |
+| 🔐 **Permissions** | App permissions viewer |
+| 📱 **Apps** | Installed apps list |
+| ⚙️ **Settings** | Device & global settings |
 
 ---
 
-## Disclaimer
+## 🤖 AI Agent
 
-L3MON is provided strictly for educational purposes, authorized cybersecurity training, and defensive security research on devices you own or have explicit, informed, written consent to test. D3VL / efxtv provide no warranty and accept no liability for any direct or indirect damage, data loss, privacy violation, or legal consequences arising from its use. Unauthorized access, interception, surveillance, or deployment against any device without the legal owner’s prior consent is illegal under laws including the U.S. Computer Fraud and Abuse Act, UK Computer Misuse Act 1990, India IT Act 2000, EU GDPR, and equivalent statutes worldwide, and is expressly prohibited — you assume sole criminal and civil responsibility for your actions; if you do not agree, or if such tools are illegal in your jurisdiction, do not download, install, or use L3MON.
+L3MON includes a built-in AI agent that can:
+
+- Execute commands on devices (`/shell`, `/alpine`, `/recon`)
+- Read stored device data
+- List all connected devices
+- Manage the platform
+
+Configure in **Settings** or via the AI panel in the sidebar.
 
 ---
 
-*Made with ❤️ by D3VL — L3MON  — Archived Oct 29, 2025 — MIT License*
-*Credits: AhMyth, express, node-geoip, lowdb, socket.io, OpenStreetMap, Leaflet*
-*Support / releases (archived): *
+## 📦 Module Store
+
+Deploy tools to the Alpine Linux environment:
+
+| Module | Tools |
+|--------|-------|
+| 🔍 Network Scanning | nmap, netcat, socat |
+| 🕵️ Recon Toolkit | curl, wget, dnsutils, whois, traceroute |
+| 🔐 Reverse SSH | openssh, socat |
+| 📶 WiFi Tools | wireless-tools, iw |
+| 💻 Dev & Exploit | python3, gcc, musl-dev, make, git |
+| 🔄 Proxychains | proxychains-ng, nmap |
+
+---
+
+## 📋 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for full version history.
+
+> **Rule: Every change MUST be documented in the changelog before merging.**
+
+| Version | Date | Highlights |
+|---------|------|------------|
+| 3.1.0 | Aug 12–13, 2026 | Full revamp: AI Agent, Dark Theme, Device Nicknames, Auto-Extraction |
+| 3.0.0 | Original | Base L3MON from GitHub |
+
+---
+
+## 📋 Contributing Rule
+
+> **Every change MUST be documented in [CHANGELOG.md](CHANGELOG.md) before merging.**
+>
+> - New features → `### ✨ New Features`
+> - Bug fixes → `### 🐛 Bug Fixes`
+> - UI changes → `### 🎨 UI Changes`
+> - Backend changes → `### 🔧 Backend Changes`
+> - Removed features → `### ❌ Removed`
+>
+> Format: `- **Feature name** — brief description`
+
+---
+
+## ⚠️ Disclaimer
+
+**This tool is for authorized security testing and educational purposes only.**
+
+Unauthorized access to computer systems is illegal. Always obtain proper authorization before testing. The developers are not responsible for any misuse of this software.
+
+---
+
+## 📄 License
+
+MIT License — See [LICENSE](LICENSE) for details.
+
+---
+
+## 🙏 Credits
+
+- **Original L3MON** by [D3VL](https://github.com/efxtv/L3MON)
+- **Revamped by** xTheDevilRazedMe
+
+---
+
+<div align="center">
+
+**Edited with ❤️ by xTheDevilRazedMe**
+
+</div>

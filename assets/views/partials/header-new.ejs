@@ -1,5 +1,6 @@
 <!-- Header -->
-<div class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 bg-bg-dark/95 backdrop-blur border-b border-slate-700/50">
+<div class="fixed top-0 left-0 right-0 z-50 flex items-center px-6 py-3 bg-bg-dark/95 backdrop-blur border-b border-slate-700/50">
+    <!-- Left: Logo -->
     <div class="flex items-center gap-3">
         <div class="w-8 h-8 bg-gradient-to-br from-accent-amber to-accent-red rounded-lg flex items-center justify-center">
             <span class="text-white font-bold text-sm">L</span>
@@ -9,15 +10,52 @@
             <p class="text-slate-500 text-xs">CONTROL PANEL v3.0</p>
         </div>
     </div>
+
+    <!-- Center: Back button + Page name -->
+    <div class="flex items-center gap-3 ml-8">
+        <% if (typeof deviceID !== 'undefined' && deviceID) { %>
+        <a href="/" class="w-8 h-8 bg-slate-700 hover:bg-slate-600 rounded-lg flex items-center justify-center transition-colors" title="Back to Dashboard">
+            <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        </a>
+        <div class="h-6 w-px bg-slate-700"></div>
+        <span class="text-white font-semibold text-sm"><%= page ? page.toUpperCase() : 'DASHBOARD' %></span>
+        <% } else { %>
+        <span class="text-white font-semibold text-sm">DASHBOARD</span>
+        <% } %>
+    </div>
+
+    <!-- Spacer -->
+    <div class="flex-1"></div>
+
+    <!-- Right: Device selector + Actions -->
     <div class="flex items-center gap-4">
+        <% if (typeof allClients !== 'undefined' && allClients.length > 0) { %>
         <div class="relative">
-            <span class="absolute -top-1 -right-1 bg-accent-red text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">0</span>
+            <select id="headerDeviceSwitcher" onchange="if(this.value) window.location='/manage/'+this.value+'/info'" class="appearance-none bg-bg-card border border-slate-700 rounded-lg text-slate-200 text-sm pl-10 pr-8 py-2 cursor-pointer hover:border-accent-blue focus:border-accent-blue outline-none transition-all">
+                <% if (typeof deviceID === 'undefined' || !deviceID) { %>
+                <option value="" disabled selected>Select device...</option>
+                <% } %>
+                <% allClients.forEach(function(c) { %>
+                <option value="<%= c.clientID %>" <%= (typeof deviceID !== 'undefined' && c.clientID === deviceID) ? 'selected' : '' %>>
+                    <%= c.nickname || c.model %> (<%= c.isOnline ? 'Online' : 'Offline' %>)
+                </option>
+                <% }); %>
+            </select>
+            <div class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                <span class="<%= (typeof deviceID !== 'undefined' && deviceID) ? 'status-online' : 'status-offline' %>"></span>
+            </div>
+            <div class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+        </div>
+        <% } %>
+        <div class="relative">
             <button class="text-slate-400 hover:text-white transition-colors" title="Notifications">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
             </button>
         </div>
-        <div class="w-8 h-8 bg-accent-blue rounded-full flex items-center justify-center cursor-pointer">
-            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-        </div>
+        <a href="/logout" class="w-8 h-8 bg-slate-700 hover:bg-slate-600 rounded-full flex items-center justify-center cursor-pointer transition-colors" title="Logout">
+            <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </a>
     </div>
 </div>

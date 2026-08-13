@@ -71,4 +71,37 @@
         .btn-ghost { background: transparent; color: #94a3b8; border: 1px solid #334155; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
         .btn-ghost:hover { background: #1e293b; color: #e2e8f0; border-color: #475569; }
     </style>
+    <script>
+    // Sidebar scroll persistence — runs before body renders
+    (function() {
+        var key = 'l3mon-sidebar-scroll';
+        // Restore on load
+        window.addEventListener('DOMContentLoaded', function() {
+            try {
+                var sb = document.getElementById('sidebar');
+                var saved = sessionStorage.getItem(key);
+                if (sb && saved !== null) sb.scrollTop = parseInt(saved, 10);
+            } catch(e) {}
+        });
+        // Save on scroll, click, and unload
+        window.addEventListener('DOMContentLoaded', function() {
+            var sb = document.getElementById('sidebar');
+            if (!sb) return;
+            sb.addEventListener('scroll', function() {
+                try { sessionStorage.setItem(key, sb.scrollTop); } catch(e) {}
+            });
+            sb.addEventListener('click', function(e) {
+                if (e.target.closest('a')) {
+                    try { sessionStorage.setItem(key, sb.scrollTop); } catch(e) {}
+                }
+            });
+        });
+        window.addEventListener('beforeunload', function() {
+            try {
+                var sb = document.getElementById('sidebar');
+                if (sb) sessionStorage.setItem(key, sb.scrollTop);
+            } catch(e) {}
+        });
+    })();
+    </script>
 </head>

