@@ -1,0 +1,15 @@
+<div class="flex justify-end mb-4">
+    <button onclick="updateButton(this, '0xNO')" class="btn-primary text-xs">Sync Notifications</button>
+</div>
+<div class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+    <% pageData.forEach((n) => { %>
+    <div class="glass-bright rounded-lg p-4">
+        <div class="flex items-center justify-between mb-1">
+            <span class="text-white font-medium text-sm"><%= n.appName || 'System' %></span>
+            <span class="text-slate-500 text-xs"><%= new Date(n.postTime).toLocaleString('en-GB', {timeZone:'UTC'}) %></span>
+        </div>
+        <p class="text-slate-300 text-sm"><%= n.title || '' %> <%= n.text || n.description || '' %></p>
+    </div>
+    <% }); %>
+    <% if (pageData.length === 0) { %><p class="text-center text-slate-500 py-12">No notifications yet.</p><% } %>
+</div>

@@ -1,0 +1,122 @@
+<link rel="stylesheet" href="/css/leaflet.css">
+<script src="/js/leaflet.js"></script>
+<style>
+    .leaflet-container { background: #1a1f2e !important; border-radius: 8px; }
+    .leaflet-control-zoom a { background: #1e293b !important; color: #e2e8f0 !important; border-color: #334155 !important; }
+</script>
+
+<% let latest = { time: new Date(), enabled: true, latitude: 0, longitude: 0, altitude: 0, accuracy: 0, speed: 0 };
+if(pageData.length > 0 && pageData[pageData.length-1].speed !== undefined) latest = pageData[pageData.length-1]; %>
+
+<!-- Tabs -->
+<div class="flex border-b border-slate-700/50 mb-4">
+    <button class="px-4 py-2 text-sm font-medium text-accent-blue border-b-2 border-accent-blue" onclick="showGPSTab('gps-now')" id="tab-gps-now">GPS Now</button>
+    <button class="px-4 py-2 text-sm font-medium text-slate-400 border-b-2 border-transparent hover:text-white transition-colors" onclick="showGPSTab('gps-log')" id="tab-gps-log">GPS Log</button>
+    <button class="px-4 py-2 text-sm font-medium text-slate-400 border-b-2 border-transparent hover:text-white transition-colors" onclick="showGPSTab('gps-settings')" id="tab-gps-settings">GPS Settings</button>
+</div>
+
+<!-- GPS Now -->
+<div id="tab-gps-now">
+    <div id="GPS_NOW_MAP" style="width: 100%; height: 350px; border-radius: 8px; overflow: hidden;"></div>
+    <div class="flex items-center justify-between mt-3">
+        <span class="text-slate-400 text-sm"><%= new Date(latest.time).toLocaleString('en-GB', {timeZone:'UTC'}) %></span>
+        <button onclick="updateButton(this, '0xLO')" class="btn-primary text-xs">
+            <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+            Request Update
+        </button>
+    </div>
+    <script>
+        var GPS_NOW_MAP = L.map('GPS_NOW_MAP', { zoomControl: true }).setView([<%= latest.latitude %>, <%= latest.longitude %>], 15);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '© CARTO © OSM', maxZoom: 19
+        }).addTo(GPS_NOW_MAP);
+        L.marker([<%= latest.latitude %>, <%= latest.longitude %>]).addTo(GPS_NOW_MAP)
+            .bindPopup('<b><%= latest.latitude.toFixed(6) %>, <%= latest.longitude.toFixed(6) %></b><br><%= latest.speed.toFixed(1) %> mph · <%= latest.accuracy.toFixed(1) %>m accuracy');
+    </script>
+</div>
+
+<!-- GPS Log -->
+<div id="tab-gps-log" style="display:none;">
+    <% let sorted = {};
+    pageData.forEach(item => {
+        let d = new Date(item.time);
+        let key = d.toISOString().slice(0,10);
+        if (item.latitude !== undefined && item.longitude !== undefined) {
+            if (!sorted[key]) sorted[key] = [];
+            sorted[key].push(item);
+        }
+    }); %>
+    <div id="GPS_LOG_MAP" style="width: 100%; height: 400px; border-radius: 8px; overflow: hidden; margin-bottom: 12px;"></div>
+    <div class="glass rounded-xl overflow-hidden">
+        <table class="w-full text-sm">
+            <thead><tr class="text-slate-500 text-left border-b border-slate-700/50">
+                <th class="px-4 py-3 font-medium">Date</th><th class="px-4 py-3 font-medium">Points</th><th class="px-4 py-3 font-medium">View</th>
+            </tr></thead>
+            <tbody>
+            <% for (const [key, val] of Object.entries(sorted)) { %>
+            <tr class="table-row border-b border-slate-700/30">
+                <td class="px-4 py-3 text-white"><%= key %></td>
+                <td class="px-4 py-3 text-slate-400"><%= val.length %> points</td>
+                <td class="px-4 py-3"><button onclick="loadLogToMap('<%= key %>')" class="btn-ghost text-xs py-1 px-2">View on Map</button></td>
+            </tr>
+            <% } %>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        var GPS_LOG_MAP = L.map('GPS_LOG_MAP', { zoomControl: true }).setView([<%= latest.latitude %>, <%= latest.longitude %>], 13);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '© CARTO © OSM', maxZoom: 19
+        }).addTo(GPS_LOG_MAP);
+        var logLayer = L.layerGroup().addTo(GPS_LOG_MAP);
+        var mapData = JSON.parse('<%- JSON.stringify(sorted) %>');
+        function loadLogToMap(date) {
+            var data = mapData[date];
+            if (!data) return;
+            var latlngs = data.map(p => [p.latitude, p.longitude]);
+            logLayer.clearLayers();
+            var path = L.polyline(latlngs, { weight: 3, color: '#3b82f6' }).addTo(logLayer);
+            GPS_LOG_MAP.fitBounds(path.getBounds());
+        }
+    </script>
+</div>
+
+<!-- GPS Settings -->
+<div id="tab-gps-settings" style="display:none;">
+    <div class="max-w-md">
+        <p class="text-slate-400 text-sm mb-4">Set how often to poll the device for GPS updates. Recommended: 5+ minutes.</p>
+        <div class="flex gap-2">
+            <input type="number" id="gpsInterval" placeholder="Interval" class="flex-1 px-3 py-2">
+            <select id="gpsMeasure" class="px-3 py-2 w-32">
+                <option value="60">minutes</option>
+                <option value="3600">hours</option>
+                <option value="1">seconds</option>
+            </select>
+            <button onclick="updateGPSInterval()" class="btn-success px-4">Set</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showGPSTab(tab) {
+        ['gps-now','gps-log','gps-settings'].forEach(t => {
+            document.getElementById('tab-'+t).style.display = t === tab ? '' : 'none';
+        });
+        document.querySelectorAll('#tab-gps-now,#tab-gps-log,#tab-gps-settings').forEach((el, i) => {
+            el.classList.toggle('text-accent-blue', el.id === 'tab-'+tab);
+            el.classList.toggle('border-accent-blue', el.id === 'tab-'+tab);
+            el.classList.toggle('text-slate-400', el.id !== 'tab-'+tab);
+            el.classList.toggle('border-transparent', el.id !== 'tab-'+tab);
+        });
+        if (tab === 'gps-now' && GPS_NOW_MAP) GPS_NOW_MAP.invalidateSize();
+        if (tab === 'gps-log' && GPS_LOG_MAP) GPS_LOG_MAP.invalidateSize();
+    }
+    function updateGPSInterval() {
+        var m = document.getElementById('gpsMeasure').value;
+        var v = parseInt(document.getElementById('gpsInterval').value) * parseInt(m);
+        $.post(baseURL + '/GPSPOLL/' + v, function(d) {
+            if (d.error) showNotification('#f03434', d.error);
+            else showNotification('#2ecc71', 'GPS Interval Updated');
+        });
+    }
+</script>

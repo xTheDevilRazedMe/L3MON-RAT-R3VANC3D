@@ -1,0 +1,321 @@
+/* ============================================================
+   L3MON Dark Theme
+   Applied when <body> has class "dark-mode"
+   Overrides the default Semantic UI light theme.
+   ============================================================ */
+
+/* ---- Base ---- */
+body.dark-mode {
+    background: #1b1e24 !important;
+    color: #c8ccd4 !important;
+}
+
+body.dark-mode a {
+    color: #7aa2f7;
+}
+
+body.dark-mode .ui.container,
+body.dark-mode .ui.segment,
+body.dark-mode .ui.card {
+    background: #21252b !important;
+    color: #c8ccd4 !important;
+}
+
+/* ---- Headers & text ---- */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode .ui.header,
+body.dark-mode .ui.header .content {
+    color: #e6e9ef !important;
+}
+
+body.dark-mode .ui.grey.dividing.header,
+body.dark-mode .ui.dividing.header {
+    border-bottom-color: #3a3f47 !important;
+}
+
+/* ---- Menus ---- */
+body.dark-mode .ui.menu,
+body.dark-mode .ui.secondary.menu,
+body.dark-mode .ui.pointing.menu,
+body.dark-mode .ui.tabular.menu {
+    background: transparent !important;
+}
+
+body.dark-mode .ui.menu .item {
+    color: #c8ccd4 !important;
+}
+
+body.dark-mode .ui.menu .item:hover,
+body.dark-mode .ui.secondary.menu .item:hover {
+    background: #2a2f37 !important;
+    color: #fff !important;
+}
+
+body.dark-mode .ui.menu .active.item,
+body.dark-mode .ui.secondary.menu .active.item {
+    background: #2a2f37 !important;
+    color: #fff !important;
+}
+
+body.dark-mode .ui.menu .item::before,
+body.dark-mode .ui.menu .item:last-child::before {
+    background: #3a3f47 !important;
+}
+
+body.dark-mode .ui.tabular.menu .item,
+body.dark-mode .ui.secondary.pointing.menu .item {
+    border-color: #3a3f47 !important;
+}
+
+body.dark-mode .ui.tabular.menu .active.item,
+body.dark-mode .ui.secondary.pointing.menu .active.item {
+    border-color: #7aa2f7 !important;
+    background: #21252b !important;
+}
+
+body.dark-mode .ui.menu .ui.dropdown .menu {
+    background: #21252b !important;
+    border-color: #3a3f47 !important;
+}
+
+body.dark-mode .ui.menu .ui.dropdown .menu .item {
+    color: #c8ccd4 !important;
+}
+
+body.dark-mode .ui.menu .ui.dropdown .menu .item:hover {
+    background: #2a2f37 !important;
+}
+
+/* ---- Segments & dividers ---- */
+body.dark-mode .ui.segment {
+    background: #21252b !important;
+    border-color: #3a3f47 !important;
+}
+
+body.dark-mode .ui.segments > .ui.segment {
+    border-color: #3a3f47 !important;
+}
+
+body.dark-mode .ui.divider,
+body.dark-mode .ui.horizontal.divider {
+    color: #6b7280 !important;
+    border-color: #3a3f47 !important;
+}
+
+body.dark-mode .ui.divider:not(.horizontal) {
+    border-top-color: #3a3f47 !important;
+}
+
+/* ---- Tables ---- */
+body.dark-mode .ui.table {
+    background: #21252b !important;
+    color: #c8ccd4 !important;
+    border-color: #3a3f47 !important;
+}
+
+body.dark-mode .ui.table thead th {
+    background: #2a2f37 !important;
+    color: #e6e9ef !important;
+}
+
+body.dark-mode .ui.table tbody td {
+    border-top-color: #3a3f47 !important;
+    color: #c8ccd4 !important;
+}
+
+body.dark-mode .ui.table tbody tr:nth-child(2n) {
+    background: #1e2228 !important;
+}
+
+body.dark-mode .ui.table tbody tr:hover {
+    background: #2a2f37 !important;
+}
+
+body.dark-mode .ui.celled.table tr td,
+body.dark-mode .ui.celled.table tr th {
+    border-color: #3a3f47 !important;
+}
+
+/* ---- Forms & inputs ---- */
+body.dark-mode .ui.form .field > label {
+    color: #c8ccd4 !important;
+}
+
+body.dark-mode .ui.input input,
+body.dark-mode .ui.form input[type="text"],
+body.dark-mode .ui.form input[type="number"],
+body.dark-mode .ui.form input[type="password"],
+body.dark-mode .ui.form input[type="email"],
+body.dark-mode .ui.form select,
+body.dark-mode .ui.form textarea {
+    background: #1b1e24 !important;
+    color: #e6e9ef !important;
+    border-color: #3a3f47 !important;
+}
+
+body.dark-mode .ui.input input::placeholder,
+body.dark-mode .ui.form input::placeholder {
+    color: #6b7280 !important;
+}
+
+body.dark-mode .ui.input input:focus,
+body.dark-mode .ui.form input:focus {
+    border-color: #7aa2f7 !important;
+}
+
+body.dark-mode .ui.labeled.input > .ui.label,
+body.dark-mode .ui.right.labeled.input > .ui.label,
+body.dark-mode .ui.left.labeled.input > .ui.label {
+    background: #2a2f37 !important;
+    color: #c8ccd4 !important;
+    border-color: #3a3f47 !important;
+}
+
+/* ---- Buttons ---- */
+body.dark-mode .ui.button {
+    color: #e6e9ef !important;
+    text-shadow: none !important;
+}
+
+body.dark-mode .ui.button:not(.blue):not(.teal):not(.green):not(.red):not(.orange):not(.yellow):not(.positive):not(.negative):not(.primary) {
+    background: #2a2f37 !important;
+    border-color: #3a3f47 !important;
+}
+
+body.dark-mode .ui.blue.button,
+body.dark-mode .ui.primary.button {
+    background: #2c6bd0 !important;
+}
+
+body.dark-mode .ui.teal.button,
+body.dark-mode .ui.positive.button {
+    background: #1a7a56 !important;
+}
+
+body.dark-mode .ui.red.button,
+body.dark-mode .ui.negative.button {
+    background: #a93030 !important;
+}
+
+/* ---- Labels & progress ---- */
+body.dark-mode .ui.label {
+    background: #2a2f37 !important;
+    color: #c8ccd4 !important;
+    border-color: #3a3f47 !important;
+}
+
+body.dark-mode .ui.progress .bar {
+    background: #2c6bd0 !important;
+}
+
+/* ---- Feed (SMS/call/notification rows) ---- */
+body.dark-mode .ui.feed > .event .content .summary,
+body.dark-mode .ui.feed > .event .content .extra.text {
+    color: #c8ccd4 !important;
+}
+
+body.dark-mode .ui.feed > .event {
+    border-top-color: #3a3f47 !important;
+}
+
+body.dark-mode .ui.feed > .event .content .date {
+    color: #6b7280 !important;
+}
+
+body.dark-mode .ui.feed .event .content .summary a,
+body.dark-mode .ui.feed .event .content .extra.text a {
+    color: #7aa2f7 !important;
+}
+
+/* ---- Statistics ---- */
+body.dark-mode .ui.statistic > .value,
+body.dark-mode .ui.statistics .statistic > .value {
+    color: #e6e9ef !important;
+}
+
+body.dark-mode .ui.statistic > .label,
+body.dark-mode .ui.statistics .statistic > .label {
+    color: #6b7280 !important;
+}
+
+/* ---- Dropdowns ---- */
+body.dark-mode .ui.dropdown .menu {
+    background: #21252b !important;
+    border-color: #3a3f47 !important;
+}
+
+body.dark-mode .ui.dropdown .menu .item {
+    color: #c8ccd4 !important;
+}
+
+body.dark-mode .ui.dropdown .menu .item:hover {
+    background: #2a2f37 !important;
+}
+
+body.dark-mode .ui.dropdown .menu .active.item {
+    background: #2a2f37 !important;
+    color: #fff !important;
+}
+
+body.dark-mode .ui.selection.dropdown {
+    background: #1b1e24 !important;
+    border-color: #3a3f47 !important;
+    color: #e6e9ef !important;
+}
+
+/* ---- Messages & errors ---- */
+body.dark-mode .ui.message {
+    background: #2a2f37 !important;
+    color: #c8ccd4 !important;
+    box-shadow: none !important;
+}
+
+body.dark-mode .ui.message .header {
+    color: #e6e9ef !important;
+}
+
+/* ---- Attached tab content ---- */
+body.dark-mode .ui.bottom.attached.segment,
+body.dark-mode .ui.bottom.attached.tab.segment {
+    background: #21252b !important;
+    border-color: #3a3f47 !important;
+}
+
+/* ---- Leaflet map ---- */
+body.dark-mode .leaflet-container {
+    background: #1b1e24 !important;
+}
+
+/* ---- Logs box (already dark, keep consistent) ---- */
+body.dark-mode .logs {
+    background-color: #14161a !important;
+}
+
+/* ---- Footer ---- */
+body.dark-mode footer,
+body.dark-mode .ui.container > div[style*="text-align: center"] {
+    color: #6b7280 !important;
+}
+
+/* ---- Scrollbars ---- */
+body.dark-mode ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+body.dark-mode ::-webkit-scrollbar-track {
+    background: #1b1e24;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: #3a3f47;
+    border-radius: 5px;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: #4a505a;
+}

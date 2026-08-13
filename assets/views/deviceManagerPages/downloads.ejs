@@ -1,0 +1,23 @@
+<div class="glass rounded-xl overflow-hidden">
+    <table class="w-full text-sm">
+        <thead><tr class="text-slate-500 text-left border-b border-slate-700/50">
+            <th class="px-4 py-3 font-medium">Name</th>
+            <th class="px-4 py-3 font-medium">Type</th>
+            <th class="px-4 py-3 font-medium">Size</th>
+            <th class="px-4 py-3 font-medium">Date</th>
+            <th class="px-4 py-3 font-medium">Action</th>
+        </tr></thead>
+        <tbody>
+        <% if (pageData && pageData.length > 0) { pageData.forEach(function(dl) { %>
+        <tr class="table-row border-b border-slate-700/30">
+            <td class="px-4 py-3 text-white text-sm"><%= dl.name || dl.fileName %></td>
+            <td class="px-4 py-3 text-slate-400 text-xs"><%= dl.type || 'file' %></td>
+            <td class="px-4 py-3 text-slate-400 text-xs"><%= dl.size || 'N/A' %></td>
+            <td class="px-4 py-3 text-slate-500 text-xs"><%= new Date(dl.time).toLocaleString('en-GB', {timeZone:'UTC'}) %></td>
+            <td class="px-4 py-3"><a href="/manage/<%= deviceID %>/downloads/<%= dl.name || dl.fileName %>" class="btn-primary text-xs py-1 px-2">Download</a></td>
+        </tr>
+        <% }); } %>
+        </tbody>
+    </table>
+    <% if (!pageData || pageData.length === 0) { %><p class="text-center text-slate-500 py-12">No downloads yet.</p><% } %>
+</div>

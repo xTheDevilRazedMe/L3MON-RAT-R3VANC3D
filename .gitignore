@@ -1,0 +1,8 @@
+node_modules/
+clientData/
+app/factory/
+maindb.json
+tunnel.json
+*.log
+.opencode/
+assets/webpublic/client_downloads/

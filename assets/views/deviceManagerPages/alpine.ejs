@@ -1,0 +1,271 @@
+<style>
+    #term-container { background:#0d1117; border-radius:6px; overflow:hidden; font-family:'Courier New',monospace; font-size:13px; }
+    #term-output { height:300px; overflow-y:auto; padding:12px; color:#c9d1d9; white-space:pre-wrap; word-break:break-all; }
+    #term-output .cmd-line { color:#58a6ff; }
+    #term-output .out-line { color:#c9d1d9; }
+    #term-output .err-line { color:#f85149; }
+    #term-input-area { display:flex; align-items:center; background:#161b22; padding:8px 12px; border-top:1px solid #30363d; }
+    #term-input-area .prompt { color:#3fb950; margin-right:6px; white-space:nowrap; font-weight:bold; }
+    #term-input { flex:1; background:transparent; border:none; color:#c9d1d9; font-family:'Courier New',monospace; font-size:13px; outline:none; }
+    #term-input::placeholder { color:#484f58; }
+    #term-status { font-size:11px; color:#8b949e; padding:4px 12px; background:#161b22; border-top:1px solid #30363d; }
+    #proc-log { background:#0d1117; color:#c9d1d9; font-family:'Courier New',monospace; font-size:12px; padding:12px; border-radius:6px; max-height:300px; overflow-y:auto; white-space:pre-wrap; }
+    #pkg-list { background:#fff; }
+    body.dark-mode #pkg-list { background:#1b1e24; border-color:#3a3f47 !important; color:#c8ccd4; }
+    body.dark-mode #pkg-list .item { color:#c8ccd4; }
+</style>
+
+<div class="ui segment">
+    <h3 class="ui grey header"><i class="icon linux"></i> Alpine Linux</h3>
+    <div class="ui top attached tabular menu">
+        <a class="item active" data-tab="tab-terminal"><i class="icon terminal"></i> Terminal</a>
+        <a class="item" data-tab="tab-packages"><i class="icon box"></i> Packages</a>
+        <a class="item" data-tab="tab-procs"><i class="icon tasks"></i> Processes</a>
+        <a class="item" data-tab="tab-modules"><i class="icon cubes"></i> Modules</a>
+        <a class="item" data-tab="tab-startup"><i class="icon rocket"></i> Startup</a>
+    </div>
+
+    <!-- TERMINAL TAB -->
+    <div class="ui bottom attached tab segment active" data-tab="tab-terminal">
+        <div style="margin-bottom:8px;">
+            <button class="ui tiny button" onclick="resetTerm()"><i class="icon redo"></i> Reset</button>
+            <span style="color:#8b949e;font-size:12px;margin-left:8px;">Working dir: <code id="term-cwd">/root</code></span>
+        </div>
+        <div id="term-container">
+            <div id="term-output">
+                <div class="cmd-line"># Alpine Linux Terminal (proot)</div>
+                <div class="out-line"># Type commands below. Output appears live.</div>
+                <div class="out-line"></div>
+            </div>
+            <div id="term-input-area">
+                <span class="prompt" id="term-prompt">/root #</span>
+                <input type="text" id="term-input" placeholder="Type command..." autofocus autocomplete="off">
+            </div>
+            <div id="term-status">Ready — polling every 500ms</div>
+        </div>
+    </div>
+
+    <!-- PACKAGES TAB -->
+    <div class="ui bottom attached tab segment" data-tab="tab-packages">
+        <form id="pkgForm" class="ui form" autocomplete="off">
+            <div class="field">
+                <label>APK Command / Packages</label>
+                <div class="ui action input">
+                    <input type="text" id="pkgCmd" placeholder="add curl" value="list --installed">
+                    <button class="ui primary button" id="runPkg" type="submit"><i class="icon play"></i> Run</button>
+                </div>
+            </div>
+        </form>
+        <div class="ui divider"></div>
+        <h4 class="ui grey header">Installed Packages</h4>
+        <div id="pkg-list" class="ui list" style="max-height:250px; overflow-y:auto; padding:10px; border:1px solid #ddd; border-radius:4px;">
+            <div class="item" style="color:#999;">Run <code>list --installed</code> to scan packages.</div>
+        </div>
+    </div>
+
+    <!-- PROCESSES TAB -->
+    <div class="ui bottom attached tab segment" data-tab="tab-procs">
+        <div style="margin-bottom:8px;">
+            <button class="ui tiny green button" onclick="supStart()"><i class="icon play"></i> Start Supervisor</button>
+            <button class="ui tiny button" onclick="supCmd('LIST_PROCS')"><i class="icon list"></i> List Processes</button>
+            <button class="ui tiny blue button" onclick="supCmd('START_SSHD')"><i class="icon server"></i> Start SSH (2222)</button>
+            <button class="ui tiny red button" onclick="supCmd('STOP_SSHD')"><i class="icon stop"></i> Stop SSH</button>
+            <button class="ui tiny button" onclick="supCmd('STOP_SSHD')" style="display:none;"></button>
+            <button class="ui tiny red button" onclick="supStop()" style="margin-left:8px;"><i class="icon power off"></i> Stop Supervisor</button>
+        </div>
+        <div id="proc-log"># Supervisor log will appear here.\n# Click "Start Supervisor" then "List Processes".</div>
+        <div style="margin-top:8px;">
+            <button class="ui tiny button" onclick="supLog()"><i class="icon refresh"></i> Refresh Log</button>
+        </div>
+    </div>
+
+    <!-- MODULES TAB -->
+    <div class="ui bottom attached tab segment" data-tab="tab-modules">
+        <p class="ui small message">One-click toolkits that install packages + config inside Alpine. Each runs an <code>apk</code> install script.</p>
+        <div class="ui cards" id="module-cards">
+            <div class="ui active inline loader"></div>
+        </div>
+        <div id="module-status" style="color:#888;margin-top:8px;"></div>
+    </div>
+
+    <!-- STARTUP TAB -->
+    <div class="ui bottom attached tab segment" data-tab="tab-startup">
+        <p class="ui small message">Configure commands to run automatically when Alpine is deployed. Saved to <code>/etc/l3mon-startup.sh</code> and executed by the supervisor at boot.</p>
+        <div class="ui form">
+            <div class="field">
+                <label>Startup Script (one command per line)</label>
+                <textarea id="startup-script" rows="8" placeholder="apk add nmap&#10;sshd -p 2222&#10;echo Alpine ready" style="font-family:'Courier New',monospace;"></textarea>
+            </div>
+            <button class="ui primary button" onclick="saveStartup()"><i class="icon save"></i> Save Startup Script</button>
+            <button class="ui button" onclick="loadStartup()"><i class="icon download"></i> Load Current</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var deviceID = '<%= deviceID %>';
+    var pollInterval = null;
+    var cmdHistory = [];
+    var histIdx = -1;
+
+    // Tab switching
+    $('.menu .item').tab();
+
+    // ===== TERMINAL =====
+    function appendOutput(text, cls) {
+        var out = document.getElementById('term-output');
+        var div = document.createElement('div');
+        div.className = cls || 'out-line';
+        div.textContent = text;
+        out.appendChild(div);
+        out.scrollTop = out.scrollHeight;
+    }
+    function updateCwd(cwd) {
+        document.getElementById('term-cwd').textContent = cwd;
+        var short = cwd === '/' ? '/' : (cwd.replace(/\/+$/,'') || '/');
+        document.getElementById('term-prompt').textContent = short + ' #';
+    }
+    function pollOutput() {
+        $.get('/term/' + deviceID + '/alpine/output', function(d) {
+            if (d.entries && d.entries.length > 0) {
+                d.entries.forEach(function(e) {
+                    var displayCmd = e.command || '';
+                    var m = displayCmd.match(/^cd\s+'[^']*'\s*&&\s*(.+)/);
+                    if (m) displayCmd = m[1];
+                    if (/^cd\s+'[^']*'$/.test(displayCmd)) displayCmd = '';
+                    if (displayCmd) appendOutput('$ ' + displayCmd, 'cmd-line');
+                    if (e.output) appendOutput(e.output, 'out-line');
+                });
+            }
+            if (d.cwd) updateCwd(d.cwd);
+        });
+    }
+    function sendTermCmd() {
+        var inp = document.getElementById('term-input');
+        var cmd = inp.value.trim();
+        if (!cmd) return;
+        cmdHistory.push(cmd);
+        histIdx = cmdHistory.length;
+        appendOutput('$ ' + cmd, 'cmd-line');
+        document.getElementById('term-status').textContent = 'Running: ' + cmd + '...';
+        inp.value = '';
+        $.post('/alpine/term/' + deviceID + '/cmd', { cmd: cmd }, function(d) {
+            if (d.error) { appendOutput('Error: ' + d.error, 'err-line'); document.getElementById('term-status').textContent = 'Error'; }
+            else { document.getElementById('term-status').textContent = 'Sent'; if (d.cwd) updateCwd(d.cwd); setTimeout(pollOutput, 800); setTimeout(pollOutput, 1600); }
+        });
+    }
+    function resetTerm() {
+        $.post('/term/' + deviceID + '/alpine/reset', function(d) {
+            document.getElementById('term-output').innerHTML = '<div class="out-line"># Session reset</div>';
+            updateCwd(d.cwd || '/root');
+        });
+    }
+
+    // ===== PACKAGES =====
+    function runPkg() {
+        var cmd = document.getElementById('pkgCmd').value.trim();
+        if (!cmd) return;
+        var btn = document.getElementById('runPkg');
+        btn.classList.add('loading');
+        $.post('/manage/' + deviceID + '/packages', { cmd: cmd }, function(d) {
+            btn.classList.remove('loading');
+            if (d.error) showNotification('#f03434', d.error);
+            else setTimeout(loadPkgs, 3000);
+        });
+    }
+    function loadPkgs() {
+        $.get('/manage/' + deviceID + '/packages', function(html) { /* not used */ });
+    }
+
+    // ===== PROCESSES =====
+    function supLogText(t) { var el = document.getElementById('proc-log'); el.textContent += t + '\n'; el.scrollTop = el.scrollHeight; }
+    function supStart() {
+        $.post('/alpine/proc/' + deviceID + '/start', function(d) { supLogText(d.error ? 'Error: '+d.error : 'Supervisor started'); });
+    }
+    function supStop() {
+        $.post('/alpine/proc/' + deviceID + '/stop', function(d) { supLogText(d.error ? 'Error: '+d.error : 'Supervisor stopped'); });
+    }
+    function supCmd(cmd) {
+        $.post('/alpine/proc/' + deviceID + '/cmd', { cmd: cmd }, function(d) {
+            supLogText(d.error ? 'Error: '+d.error : 'Sent: ' + cmd);
+            setTimeout(supLog, 1500);
+        });
+    }
+    function supLog() {
+        $.post('/alpine/proc/' + deviceID + '/log', function(d) {
+            if (!d.error) setTimeout(function() {
+                $.get('/term/' + deviceID + '/alpine/output', function(out) {
+                    if (out.entries && out.entries.length > 0) {
+                        var last = out.entries[out.entries.length - 1];
+                        document.getElementById('proc-log').textContent = last.output || '';
+                        document.getElementById('proc-log').scrollTop = document.getElementById('proc-log').scrollHeight;
+                    }
+                });
+            }, 1500);
+        });
+    }
+
+    // ===== MODULES =====
+    function loadModules() {
+        $.get('/modules', function(d) {
+            var container = document.getElementById('module-cards');
+            container.innerHTML = '';
+            if (!d.modules || Object.keys(d.modules).length === 0) { container.innerHTML = '<div class="ui message">No modules.</div>'; return; }
+            Object.keys(d.modules).forEach(function(key) {
+                var m = d.modules[key];
+                var card = document.createElement('div');
+                card.className = 'ui card';
+                card.innerHTML = '<div class="content"><div class="header"><i class="icon ' + m.icon + '"></i> ' + m.name + '</div><div class="description" style="margin:6px 0;">' + m.description + '</div><button class="ui tiny green button deploy-btn" data-module="' + key + '">Deploy</button></div>';
+                container.appendChild(card);
+            });
+            $('.deploy-btn').click(function() {
+                var key = $(this).data('module');
+                var btn = $(this);
+                btn.addClass('loading');
+                $('#module-status').text('Deploying ' + key + '...');
+                $.post('/manage/' + deviceID + '/modules/deploy', { module: key }, function(res) {
+                    btn.removeClass('loading');
+                    if (res.error) { showNotification('#f03434', res.error); $('#module-status').text(''); }
+                    else { showNotification('#2ecc71', res.message); $('#module-status').text(res.message); }
+                });
+            });
+        });
+    }
+
+    // ===== STARTUP =====
+    function saveStartup() {
+        var script = document.getElementById('startup-script').value;
+        $.post('/alpine/proc/' + deviceID + '/startup', { script: script }, function(d) {
+            showNotification(d.error ? '#f03434' : '#2ecc71', d.error || 'Startup script saved');
+        });
+    }
+    function loadStartup() {
+        $.post('/alpine/proc/' + deviceID + '/getstartup', function(d) {
+            setTimeout(function() {
+                $.get('/term/' + deviceID + '/alpine/output', function(out) {
+                    if (out.entries && out.entries.length > 0) {
+                        var last = out.entries[out.entries.length - 1];
+                        var txt = (last.output || '').replace(/cd '[^']*' && /, '').trim();
+                        if (txt === 'EMPTY') txt = '';
+                        else {
+                            try { txt = atob(txt); } catch(e) { /* not base64, keep as-is */ }
+                        }
+                        document.getElementById('startup-script').value = txt;
+                    }
+                });
+            }, 1500);
+        });
+    }
+
+    $(function() {
+        document.getElementById('term-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') sendTermCmd();
+            else if (e.key === 'ArrowUp') { e.preventDefault(); if (histIdx > 0) { histIdx--; this.value = cmdHistory[histIdx]; } }
+            else if (e.key === 'ArrowDown') { e.preventDefault(); if (histIdx < cmdHistory.length - 1) { histIdx++; this.value = cmdHistory[histIdx]; } else { histIdx = cmdHistory.length; this.value = ''; } }
+        });
+        document.getElementById('pkgForm').addEventListener('submit', function(e) { e.preventDefault(); runPkg(); });
+        pollInterval = setInterval(pollOutput, 500);
+        pollOutput();
+        loadModules();
+    });
+</script>

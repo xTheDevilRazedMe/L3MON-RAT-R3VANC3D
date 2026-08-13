@@ -1,0 +1,101 @@
+<!-- Device Manager Sidebar -->
+<div class="w-48 flex-shrink-0">
+    <div class="space-y-1">
+        <a href="<%= baseURL %>/info" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+            <% if (page==='info') { %> bg-accent-blue/10 text-accent-blue <% } else { %> text-slate-400 hover:text-white hover:bg-bg-hover <% } %>">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Info
+        </a>
+        <a href="<%= baseURL %>/gps" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+            <% if (page==='gps') { %> bg-accent-blue/10 text-accent-blue <% } else { %> text-slate-400 hover:text-white hover:bg-bg-hover <% } %>">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+            GPS
+        </a>
+        <a href="<%= baseURL %>/contacts" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+            <% if (page==='contacts') { %> bg-accent-blue/10 text-accent-blue <% } else { %> text-slate-400 hover:text-white hover:bg-bg-hover <% } %>">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Contacts
+        </a>
+        <a href="<%= baseURL %>/calls" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+            <% if (page==='calls') { %> bg-accent-blue/10 text-accent-blue <% } else { %> text-slate-400 hover:text-white hover:bg-bg-hover <% } %>">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+            Call Log
+        </a>
+        <a href="<%= baseURL %>/sms" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+            <% if (page==='sms') { %> bg-accent-blue/10 text-accent-blue <% } else { %> text-slate-400 hover:text-white hover:bg-bg-hover <% } %>">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+            SMS Manager
+        </a>
+        <a href="<%= baseURL %>/notifications" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+            <% if (page==='notifications') { %> bg-accent-blue/10 text-accent-blue <% } else { %> text-slate-400 hover:text-white hover:bg-bg-hover <% } %>">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+            Notifications
+        </a>
+        <a href="<%= baseURL %>/clipboard" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+            <% if (page==='clipboard') { %> bg-accent-blue/10 text-accent-blue <% } else { %> text-slate-400 hover:text-white hover:bg-bg-hover <% } %>">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            Clipboard
+        </a>
+        <a href="<%= baseURL %>/microphone" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+            <% if (page==='microphone') { %> bg-accent-blue/10 text-accent-blue <% } else { %> text-slate-400 hover:text-white hover:bg-bg-hover <% } %>">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+            Microphone
+        </a>
+        <a href="<%= baseURL %>/camera" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+            <% if (page==='camera') { %> bg-accent-blue/10 text-accent-blue <% } else { %> text-slate-400 hover:text-white hover:bg-bg-hover <% } %>">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            Camera
+        </a>
+        <a href="<%= baseURL %>/keylogger" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+            <% if (page==='keylogger') { %> bg-accent-blue/10 text-accent-blue <% } else { %> text-slate-400 hover:text-white hover:bg-bg-hover <% } %>">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+            Keylogger
+        </a>
+        <a href="<%= baseURL %>/accounts" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+            <% if (page==='accounts') { %> bg-accent-blue/10 text-accent-blue <% } else { %> text-slate-400 hover:text-white hover:bg-bg-hover <% } %>">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+            Accounts
+        </a>
+        <a href="<%= baseURL %>/syssettings" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+            <% if (page==='syssettings') { %> bg-accent-blue/10 text-accent-blue <% } else { %> text-slate-400 hover:text-white hover:bg-bg-hover <% } %>">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+            Sys Settings
+        </a>
+        <a href="<%= baseURL %>/files" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+            <% if (page==='files' || page==='downloads') { %> bg-accent-blue/10 text-accent-blue <% } else { %> text-slate-400 hover:text-white hover:bg-bg-hover <% } %>">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+            File Manager
+        </a>
+        <a href="<%= baseURL %>/apps" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+            <% if (page==='apps') { %> bg-accent-blue/10 text-accent-blue <% } else { %> text-slate-400 hover:text-white hover:bg-bg-hover <% } %>">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+            Installed Apps
+        </a>
+        <a href="<%= baseURL %>/permissions" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+            <% if (page==='permissions') { %> bg-accent-blue/10 text-accent-blue <% } else { %> text-slate-400 hover:text-white hover:bg-bg-hover <% } %>">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            Permissions
+        </a>
+        <a href="<%= baseURL %>/terminal" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+            <% if (page==='terminal') { %> bg-accent-blue/10 text-accent-blue <% } else { %> text-slate-400 hover:text-white hover:bg-bg-hover <% } %>">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            Terminal
+        </a>
+        <a href="<%= baseURL %>/alpine" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+            <% if (page==='alpine' || page==='packages' || page==='exploits') { %> bg-accent-blue/10 text-accent-blue <% } else { %> text-slate-400 hover:text-white hover:bg-bg-hover <% } %>">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/></svg>
+            Alpine Linux
+        </a>
+        <a href="<%= baseURL %>/settings" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all
+            <% if (page==='settings') { %> bg-accent-blue/10 text-accent-blue <% } else { %> text-slate-400 hover:text-white hover:bg-bg-hover <% } %>">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.293.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Settings
+        </a>
+    </div>
+    <div class="mt-4 pt-4 border-t border-slate-700/50">
+        <button class="w-full btn-danger text-sm py-2 flex items-center justify-center gap-2" id="deleteDeviceBtn">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            Delete Device
+        </button>
+    </div>
+</div>

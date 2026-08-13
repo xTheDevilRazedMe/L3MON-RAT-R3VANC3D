@@ -1,0 +1,47 @@
+<br>
+<div class="ui secondary menu">
+    <div class="header item"><img src="/logo.png" style="width: 100px"></div>
+    <a href="/" class="item">
+        <i class="icon mobile alternate"></i>&nbsp;&nbsp; Devices
+    </a>
+
+    <a href="/builder" class="item">
+        <i class="icon wrench"></i>&nbsp;&nbsp; APK Builder
+    </a>
+
+    <a href="/logs" class="item">
+        <i class="icon terminal"></i>&nbsp;&nbsp; Event Log
+    </a>
+    <div class="right menu">
+        <a href="#" id="darkModeToggle" class="ui item" title="Toggle dark mode">
+            <i class="icon moon"></i>&nbsp;&nbsp; <span id="darkModeLabel">Dark</span>
+        </a>
+        <a href="/logout" class="ui item">
+            <i class="icon door"></i>&nbsp;&nbsp; Logout
+        </a>
+    </div>
+</div>
+<div class="ui divider"></div>
+<br>
+
+<script>
+    $(document).ready(function () {
+        function isDark() {
+            try { return localStorage.getItem('l3mon-dark-mode') === 'true'; } catch (e) { return false; }
+        }
+        function updateToggleUI() {
+            var dark = isDark();
+            $('#darkModeToggle .icon').toggleClass('moon', !dark).toggleClass('sun', dark);
+            $('#darkModeLabel').text(dark ? 'Light' : 'Dark');
+        }
+        $('#darkModeToggle').click(function (e) {
+            e.preventDefault();
+            var dark = !isDark();
+            try { localStorage.setItem('l3mon-dark-mode', dark ? 'true' : 'false'); } catch (e) {}
+            document.documentElement.classList.toggle('dark-mode', dark);
+            document.body.classList.toggle('dark-mode', dark);
+            updateToggleUI();
+        });
+        updateToggleUI();
+    });
+</script>

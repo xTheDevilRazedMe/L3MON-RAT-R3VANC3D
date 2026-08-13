@@ -1,0 +1,42 @@
+<h3 class="text-white font-semibold text-lg mb-2">Alpine Package Manager</h3>
+<p class="text-slate-400 text-sm mb-4">Manage Alpine Linux packages inside proot.</p>
+
+<div class="glass rounded-xl p-4 mb-6">
+    <form id="pkgForm" class="flex gap-2" autocomplete="off">
+        <input type="text" id="pkgCmd" placeholder="add curl, del nmap, list --installed" value="list --installed" class="flex-1 px-3 py-2 text-sm">
+        <button type="submit" class="btn-primary text-sm">Run</button>
+    </form>
+</div>
+
+<h4 class="text-white font-semibold text-sm mb-3">Installed Packages</h4>
+<div class="glass rounded-xl overflow-hidden" style="max-height:350px;overflow-y:auto;">
+    <table class="w-full text-sm">
+        <thead><tr class="text-slate-500 text-left border-b border-slate-700/50">
+            <th class="px-3 py-2 font-medium">Package</th>
+        </tr></thead>
+        <tbody id="pkg-table">
+        <% if (pageData && pageData.list && pageData.list.length > 0) { pageData.list.forEach(function(p) { %>
+        <tr class="table-row border-b border-slate-700/30">
+            <td class="px-3 py-2 text-white font-mono text-xs"><%= p %></td>
+        </tr>
+        <% }); } else { %>
+        <tr><td class="px-3 py-6 text-center text-slate-500">Run <code>list --installed</code> to scan.</td></tr>
+        <% } %>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.getElementById('pkgForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var cmd = document.getElementById('pkgCmd').value.trim();
+        if (!cmd) return;
+        var btn = this.querySelector('button');
+        btn.disabled = true; btn.textContent = 'Running...';
+        $.post('/manage/<%= deviceID %>/packages', { cmd: cmd }, function(d) {
+            btn.disabled = false; btn.textContent = 'Run';
+            if (d.error) showNotification('#f03434', d.error);
+            else showNotification('#2ecc71', d.message);
+        });
+    });
+</script>

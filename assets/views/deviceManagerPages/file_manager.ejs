@@ -1,0 +1,57 @@
+<div class="glass rounded-xl p-4">
+    <div class="flex items-center gap-2 mb-4">
+        <label class="text-slate-400 text-sm">Path:</label>
+        <input type="text" id="filePath" value="/" class="flex-1 px-3 py-1.5 text-sm">
+        <button onclick="loadFiles()" class="btn-primary text-xs py-1.5 px-3">Go</button>
+        <button onclick="uploadFile()" class="btn-success text-xs py-1.5 px-3">
+            <svg class="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            Upload
+        </button>
+        <input type="file" id="fileUpload" style="display:none" onchange="handleUpload(this)">
+    </div>
+
+    <div class="bg-slate-800/50 rounded-lg p-3 max-h-[400px] overflow-y-auto" id="fileList">
+        <div class="text-center py-8 text-slate-500">Loading...</div>
+    </div>
+</div>
+
+<script>
+    function loadFiles() {
+        var path = document.getElementById('filePath').value;
+        sendCommand('0xFI', { action: 'ls', path: path }, function(error, data) {
+            if (error) { document.getElementById('fileList').innerHTML = '<p class="text-accent-red text-center py-4">' + error + '</p>'; return; }
+            var html = '';
+            try {
+                var files = JSON.parse(data);
+                files.forEach(function(f) {
+                    var icon = f.type === 'directory' ? 'folder' : 'file outline';
+                    var click = f.type === 'directory' ? 'navigateTo(\'' + path + '/' + f.name + '\')' : 'downloadFile(\'' + path + '/' + f.name + '\')';
+                    html += '<div class="flex items-center gap-3 py-2 px-3 hover:bg-bg-hover rounded cursor-pointer transition-colors" onclick="' + click + '">' +
+                        '<i class="icon ' + icon + ' text-slate-400"></i>' +
+                        '<span class="text-white text-sm">' + f.name + '</span>' +
+                        '<span class="text-slate-500 text-xs ml-auto">' + (f.size || '') + '</span>' +
+                        '</div>';
+                });
+                if (files.length === 0) html = '<p class="text-slate-500 text-center py-4">Empty directory</p>';
+            } catch(e) { html = '<p class="text-slate-500 text-center py-4">No files</p>'; }
+            document.getElementById('fileList').innerHTML = html;
+        });
+    }
+    function navigateTo(path) {
+        document.getElementById('filePath').value = path;
+        loadFiles();
+    }
+    function downloadFile(path) {
+        sendCommand('0xFI', { action: 'dl', path: path }, function(error, data) {
+            if (error) showNotification('#f03434', error);
+            else showNotification('#2ecc71', 'Download started');
+        });
+    }
+    function uploadFile() { document.getElementById('fileUpload').click(); }
+    function handleUpload(input) {
+        if (input.files.length > 0) {
+            showNotification('#2ecc71', 'Upload: ' + input.files[0].name);
+        }
+    }
+    loadFiles();
+</script>

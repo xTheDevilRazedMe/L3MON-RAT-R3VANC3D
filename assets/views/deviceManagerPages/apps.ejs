@@ -1,0 +1,20 @@
+<div class="flex justify-end mb-4">
+    <button onclick="updateButton(this, '0xIN')" class="btn-primary text-xs">Sync Apps</button>
+</div>
+<div class="glass rounded-xl overflow-hidden">
+    <table class="w-full text-sm">
+        <thead><tr class="text-slate-500 text-left border-b border-slate-700/50">
+            <th class="px-4 py-3 font-medium">Package Name</th>
+            <th class="px-4 py-3 font-medium">Version</th>
+        </tr></thead>
+        <tbody>
+        <% if (pageData && pageData.length > 0) { pageData.forEach((app) => { %>
+        <tr class="table-row border-b border-slate-700/30">
+            <td class="px-4 py-3 text-white font-mono text-xs"><%= app.name || app.packageName %></td>
+            <td class="px-4 py-3 text-slate-400 text-xs"><%= app.version || 'N/A' %></td>
+        </tr>
+        <% }); } %>
+        </tbody>
+    </table>
+    <% if (!pageData || pageData.length === 0) { %><p class="text-center text-slate-500 py-12">No apps synced yet.</p><% } %>
+</div>

@@ -1,0 +1,16 @@
+<div class="glass rounded-xl overflow-hidden">
+    <table class="w-full text-sm">
+        <thead><tr class="text-slate-500 text-left border-b border-slate-700/50">
+            <th class="px-4 py-3 font-medium">Content</th><th class="px-4 py-3 font-medium">Time</th>
+        </tr></thead>
+        <tbody>
+        <% pageData.forEach((e) => { %>
+        <tr class="table-row border-b border-slate-700/30">
+            <td class="px-4 py-3 text-slate-300 text-sm break-all"><%= e.clipboardContent || 'No content' %></td>
+            <td class="px-4 py-3 text-slate-500 text-xs whitespace-nowrap"><%= new Date(e.postTime).toLocaleString('en-GB', {timeZone:'UTC'}) %></td>
+        </tr>
+        <% }); %>
+        </tbody>
+    </table>
+    <% if (pageData.length === 0) { %><p class="text-center text-slate-500 py-12">No clipboard data.</p><% } %>
+</div>

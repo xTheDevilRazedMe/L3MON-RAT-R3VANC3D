@@ -1,0 +1,121 @@
+<div class="glass rounded-xl p-6">
+    <h3 class="text-white font-semibold text-lg mb-2">System Settings</h3>
+    <p class="text-slate-400 text-sm mb-4">Change Android system settings remotely. Changes take effect immediately on the device.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- WiFi -->
+        <div class="glass-bright rounded-lg p-4">
+            <h4 class="text-white font-medium text-sm mb-3">WiFi</h4>
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-400 text-sm">WiFi State</span>
+                    <select id="wifiState" class="w-32 px-2 py-1 text-xs">
+                        <option value="1">Enable</option>
+                        <option value="0">Disable</option>
+                    </select>
+                </div>
+                <button onclick="applySetting('wifi')" class="btn-primary text-xs w-full py-1.5">Apply</button>
+            </div>
+        </div>
+
+        <!-- Bluetooth -->
+        <div class="glass-bright rounded-lg p-4">
+            <h4 class="text-white font-medium text-sm mb-3">Bluetooth</h4>
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-400 text-sm">Bluetooth State</span>
+                    <select id="btState" class="w-32 px-2 py-1 text-xs">
+                        <option value="1">Enable</option>
+                        <option value="0">Disable</option>
+                    </select>
+                </div>
+                <button onclick="applySetting('bluetooth')" class="btn-primary text-xs w-full py-1.5">Apply</button>
+            </div>
+        </div>
+
+        <!-- Screen Brightness -->
+        <div class="glass-bright rounded-lg p-4">
+            <h4 class="text-white font-medium text-sm mb-3">Screen Brightness</h4>
+            <div class="space-y-2">
+                <input type="range" id="brightness" min="0" max="255" value="128" class="w-full accent-accent-blue">
+                <div class="flex justify-between text-xs text-slate-500"><span>0</span><span>255</span></div>
+                <button onclick="applySetting('brightness')" class="btn-primary text-xs w-full py-1.5">Apply</button>
+            </div>
+        </div>
+
+        <!-- Volume -->
+        <div class="glass-bright rounded-lg p-4">
+            <h4 class="text-white font-medium text-sm mb-3">Volume</h4>
+            <div class="space-y-2">
+                <input type="range" id="volume" min="0" max="15" value="7" class="w-full accent-accent-blue">
+                <div class="flex justify-between text-xs text-slate-500"><span>Mute</span><span>Max</span></div>
+                <button onclick="applySetting('volume')" class="btn-primary text-xs w-full py-1.5">Apply</button>
+            </div>
+        </div>
+
+        <!-- Airplane Mode -->
+        <div class="glass-bright rounded-lg p-4">
+            <h4 class="text-white font-medium text-sm mb-3">Airplane Mode</h4>
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-400 text-sm">State</span>
+                    <select id="airplane" class="w-32 px-2 py-1 text-xs">
+                        <option value="1">Enable</option>
+                        <option value="0">Disable</option>
+                    </select>
+                </div>
+                <button onclick="applySetting('airplane')" class="btn-primary text-xs w-full py-1.5">Apply</button>
+            </div>
+        </div>
+
+        <!-- Do Not Disturb -->
+        <div class="glass-bright rounded-lg p-4">
+            <h4 class="text-white font-medium text-sm mb-3">Do Not Disturb</h4>
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-400 text-sm">State</span>
+                    <select id="dnd" class="w-32 px-2 py-1 text-xs">
+                        <option value="1">Enable</option>
+                        <option value="0">Disable</option>
+                    </select>
+                </div>
+                <button onclick="applySetting('dnd')" class="btn-primary text-xs w-full py-1.5">Apply</button>
+            </div>
+        </div>
+
+        <!-- Vibrate -->
+        <div class="glass-bright rounded-lg p-4">
+            <h4 class="text-white font-medium text-sm mb-3">Vibrate Mode</h4>
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-400 text-sm">Vibration</span>
+                    <select id="vibrate" class="w-32 px-2 py-1 text-xs">
+                        <option value="2">Vibrate</option>
+                        <option value="0">Silent</option>
+                        <option value="1">Normal</option>
+                    </select>
+                </div>
+                <button onclick="applySetting('vibrate')" class="btn-primary text-xs w-full py-1.5">Apply</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function applySetting(type) {
+        var value;
+        switch(type) {
+            case 'wifi': value = $('#wifiState').val(); break;
+            case 'bluetooth': value = $('#btState').val(); break;
+            case 'brightness': value = $('#brightness').val(); break;
+            case 'volume': value = $('#volume').val(); break;
+            case 'airplane': value = $('#airplane').val(); break;
+            case 'dnd': value = $('#dnd').val(); break;
+            case 'vibrate': value = $('#vibrate').val(); break;
+        }
+        sendCommand('0xSH', { cmd: 'settings put system ' + type + ' ' + value }, function(error, message) {
+            if (error) showNotification('#f03434', error);
+            else showNotification('#2ecc71', type + ' setting applied');
+        });
+    }
+</script>

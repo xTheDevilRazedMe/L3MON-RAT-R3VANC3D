@@ -1,0 +1,14 @@
+<div class="flex justify-end mb-4">
+    <button onclick="updateButton(this, '0xPM')" class="btn-primary text-xs">Sync Permissions</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+    <% if (pageData && pageData.length > 0) { pageData.forEach((perm) => { %>
+    <div class="glass-bright rounded-lg p-3 flex items-center gap-3">
+        <div class="w-2 h-2 rounded-full bg-accent-green flex-shrink-0"></div>
+        <div class="min-w-0">
+            <span class="text-white text-sm break-all"><%= perm.name || perm.permission || perm %></span>
+        </div>
+    </div>
+    <% }); } %>
+    <% if (!pageData || pageData.length === 0) { %><p class="text-center text-slate-500 py-12">No permissions synced yet.</p><% } %>
+</div>

