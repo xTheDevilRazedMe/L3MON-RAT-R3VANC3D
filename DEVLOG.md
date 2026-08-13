@@ -36,6 +36,17 @@ Every change to this repository gets documented here first. This is the granular
 
 ## 2026-08-13 — Session Log
 
+### 07:30
+- **File:** includes/modules.js
+- **Change:** Added 5 new persistence/connection modules
+- **Reason:** User requested modules focused on keeping connection alive and persistent
+- **New modules:**
+  - **keepalive** — watchdog scripts, auto-reconnect, heartbeat monitors
+  - **reverse-shell** — socat/python3 encrypted reverse shells with auto-reconnect
+  - **cron-persist** — scheduled tasks for auto-restart and health checks
+  - **network-watch** — monitor network/IP/WiFi changes, trigger reconnection
+  - **anti-forensics** — log cleanup, secure deletion, stealth mode
+
 ### 07:15
 - **File:** assets/views/deviceManagerPages/alpine.ejs
 - **Change:** Complete rewrite from Semantic UI to Tailwind dark theme
